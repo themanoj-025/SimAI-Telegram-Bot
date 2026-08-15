@@ -18,9 +18,7 @@ class GitHubScraper(AsyncBaseScraper):
         if articles:
             return articles
 
-        logger.warning(
-            "GitHub scraper returned 0 live results - using fallback content."
-        )
+        logger.warning("GitHub scraper returned 0 live results - using fallback content.")
         return get_fallback_articles("github", limit)
 
     def _parse_trending_html(self, html: str, limit: int) -> list[dict]:

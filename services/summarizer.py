@@ -1,6 +1,9 @@
 import asyncio
 import warnings
 
+from config.config import Config
+from utils.logger import setup_logger
+
 warnings.filterwarnings(
     "ignore",
     message=r"urllib3 .* doesn't match a supported version!",
@@ -9,9 +12,6 @@ warnings.filterwarnings(
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", FutureWarning)
     import google.generativeai as genai
-
-from config.config import Config
-from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
 
@@ -27,9 +27,7 @@ class Summarizer:
             logger.info("Gemini AI summarizer initialized.")
         else:
             self.model = None
-            logger.warning(
-                "GEMINI_API_KEY not found. Falling back to simple summaries."
-            )
+            logger.warning("GEMINI_API_KEY not found. Falling back to simple summaries.")
 
     async def summarize_articles(self, articles):
         if not articles:

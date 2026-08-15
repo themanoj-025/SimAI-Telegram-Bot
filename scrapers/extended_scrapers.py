@@ -28,9 +28,7 @@ class ExtendedScraper(AsyncBaseScraper):
         feeds = self.config.RSS_FEEDS.get(category, [])
         articles = []
 
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-        }
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
         async with httpx.AsyncClient(headers=headers, follow_redirects=True) as client:
             for url in feeds:
                 try:
@@ -65,14 +63,10 @@ class ExtendedScraper(AsyncBaseScraper):
 
         stale_cache = self.cache.get_latest_cached_data(category)
         if stale_cache:
-            logger.warning(
-                f"Live fetch failed for {category}; returning cached fallback data."
-            )
+            logger.warning(f"Live fetch failed for {category}; returning cached fallback data.")
             return stale_cache[:limit]
 
-        logger.warning(
-            f"No live or cached data for {category}; using static fallback content."
-        )
+        logger.warning(f"No live or cached data for {category}; using static fallback content.")
         return get_fallback_articles(category, limit)
 
 

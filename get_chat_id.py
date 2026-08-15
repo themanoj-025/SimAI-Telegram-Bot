@@ -28,9 +28,7 @@ def get_chat_id():
                             f"Chat ID: {chat['id']} | Type: {chat['type']} | Name: {chat.get('first_name', 'N/A')}"
                         )
             else:
-                print(
-                    "No messages found. Make sure you've sent a message to the bot first!"
-                )
+                print("No messages found. Make sure you've sent a message to the bot first!")
         else:
             print(f"Error: {data.get('description')}")
     except Exception as e:

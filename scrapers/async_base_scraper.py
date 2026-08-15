@@ -22,9 +22,7 @@ class AsyncBaseScraper:
         """Fetch a URL asynchronously and return the response body as text."""
         request_timeout = timeout or self.config.REQUEST_TIMEOUT
 
-        async with httpx.AsyncClient(
-            headers=self.headers, follow_redirects=True
-        ) as client:
+        async with httpx.AsyncClient(headers=self.headers, follow_redirects=True) as client:
             try:
                 response = await client.get(url, timeout=request_timeout)
                 response.raise_for_status()

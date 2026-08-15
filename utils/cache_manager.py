@@ -19,21 +19,25 @@ class CacheManager:
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
-                cursor.execute("""
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS cache (
                         category TEXT,
                         data TEXT,
                         last_updated TIMESTAMP
                     )
-                """)
-                cursor.execute("""
+                """
+                )
+                cursor.execute(
+                    """
                     CREATE TABLE IF NOT EXISTS seen_items (
                         category TEXT,
                         item_id TEXT,
                         first_seen TIMESTAMP,
                         PRIMARY KEY (category, item_id)
                     )
-                """)
+                """
+                )
                 conn.commit()
         except Exception as e:
             logger.error(f"Error initializing SQLite cache database: {e}")

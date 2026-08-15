@@ -32,9 +32,7 @@ def _get_command_query(
     if context.args:
         return " ".join(context.args).strip()
 
-    message_text = (
-        update.message.text.strip() if update.message and update.message.text else ""
-    )
+    message_text = update.message.text.strip() if update.message and update.message.text else ""
     if not message_text:
         return ""
 
@@ -87,9 +85,7 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await start_command(update, context)
 
 
-async def generic_command(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, category: str
-):
+async def generic_command(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str):
     await update.message.reply_text("Fetching updates...")
     try:
         report = await report_generator.generate_report(category)
@@ -110,8 +106,7 @@ async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         news = await NewsScraper().fetch_news(10)
         articles = [
-            article.to_dict() if hasattr(article, "to_dict") else article
-            for article in news
+            article.to_dict() if hasattr(article, "to_dict") else article for article in news
         ]
         summary = await summarizer.summarize_articles(articles)
         await send_split_message(update, f"*AI News Summary*\n\n{summary}")
@@ -187,28 +182,20 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif "twitter" in text or " x " in text or "tweet" in text:
         await generic_command(update, context, "twitter")
     else:
-        await update.message.reply_text(
-            "Try /daily, /compare, /roadmap, /leaderboard, or /help."
-        )
+        await update.message.reply_text("Try /daily, /compare, /roadmap, /leaderboard, or /help.")
 
 
 def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list):
     """Create a scheduler callback that broadcasts fresh content safely from a worker thread."""
 
     def callback():
-        logger.info(
-            "2-hour auto-refresh triggered - generating a fresh AI Daily Brief..."
-        )
+        logger.info("2-hour auto-refresh triggered - generating a fresh AI Daily Brief...")
 
         async def _run():
             try:
-                report = await report_generator.generate_report(
-                    "all", force_refresh=True
-                )
+                report = await report_generator.generate_report("all", force_refresh=True)
                 max_len = 4000
-                chunks = [
-                    report[i : i + max_len] for i in range(0, len(report), max_len)
-                ]
+                chunks = [report[i : i + max_len] for i in range(0, len(report), max_len)]
 
                 for chunk in chunks:
                     try:
@@ -225,9 +212,7 @@ def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list):
         if loop_holder and loop_holder[0] is not None:
             asyncio.run_coroutine_threadsafe(_run(), loop_holder[0])
         else:
-            logger.warning(
-                "Auto-broadcast skipped because the event loop is not ready yet."
-            )
+            logger.warning("Auto-broadcast skipped because the event loop is not ready yet.")
 
     return callback
 
@@ -237,9 +222,7 @@ def main():
     logger.info("Starting bot...")
 
     if not config.TELEGRAM_BOT_TOKEN:
-        raise ValueError(
-            "TELEGRAM_BOT_TOKEN is required. Set it in your environment or .env file."
-        )
+        raise ValueError("TELEGRAM_BOT_TOKEN is required. Set it in your environment or .env file.")
 
     loop_holder = [None]
 

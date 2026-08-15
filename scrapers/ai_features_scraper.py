@@ -377,9 +377,7 @@ ROADMAPS = {
 
 class AICompareScraper:
     def compare(self, models_input: str) -> str:
-        parts = re.split(
-            r"\s+vs\.?\s+|\s+and\s+|,\s*", models_input, flags=re.IGNORECASE
-        )
+        parts = re.split(r"\s+vs\.?\s+|\s+and\s+|,\s*", models_input, flags=re.IGNORECASE)
         parts = [part.strip().lower() for part in parts if part.strip()]
 
         resolved = []
@@ -389,9 +387,7 @@ class AICompareScraper:
                 resolved.append((key, MODEL_DATA[key]))
 
         if not resolved:
-            known = ", ".join(
-                sorted({data["full_name"] for data in MODEL_DATA.values()})
-            )
+            known = ", ".join(sorted({data["full_name"] for data in MODEL_DATA.values()}))
             return (
                 f"No recognized models found in: *{models_input}*\n\n"
                 f"Supported models:\n{known}\n\n"

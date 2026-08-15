@@ -93,9 +93,7 @@ class TwitterScraper(AsyncBaseScraper):
         sampled_accounts = random.sample(self.accounts, min(len(self.accounts), 8))
 
         async def fetch_account_tweets(account: str) -> list[dict]:
-            for rsshub in random.sample(
-                self.rsshub_instances, len(self.rsshub_instances)
-            ):
+            for rsshub in random.sample(self.rsshub_instances, len(self.rsshub_instances)):
                 rss_url = f"{rsshub}/twitter/user/{account}"
                 try:
                     content = await self.fetch_url(rss_url, timeout=5)
