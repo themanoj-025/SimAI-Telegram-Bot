@@ -117,9 +117,7 @@ class ArxivScraper(AsyncBaseScraper):
         if result:
             return result
 
-        logger.warning(
-            "arXiv scraper returned 0 live results - using fallback content."
-        )
+        logger.warning("arXiv scraper returned 0 live results - using fallback content.")
         return [
             Article(
                 title=item["title"],
@@ -276,9 +274,7 @@ class TutorialScraper(AsyncBaseScraper):
         if result:
             return result
 
-        logger.warning(
-            "Tutorial scraper returned 0 live results - using fallback content."
-        )
+        logger.warning("Tutorial scraper returned 0 live results - using fallback content.")
         return [
             Article(
                 title=item["title"],

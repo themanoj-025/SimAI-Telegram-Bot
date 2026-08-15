@@ -64,9 +64,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
             logger.error(f"Error parsing RSS {url}: {e}")
             return []
 
-    async def _fetch_html_articles(
-        self, url: str, source_name: str, limit: int
-    ) -> list[dict]:
+    async def _fetch_html_articles(self, url: str, source_name: str, limit: int) -> list[dict]:
         """Generic HTML article extractor for news pages."""
         content = await self.fetch_url_with_headers(url)
         if not content:
@@ -83,8 +81,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
                     # Maybe the heading is inside a link
                     link = (
                         heading.parent
-                        if heading.parent.name == "a"
-                        and heading.parent.has_attr("href")
+                        if heading.parent.name == "a" and heading.parent.has_attr("href")
                         else None
                     )
 
@@ -179,7 +176,5 @@ class IndianAINewsScraper(AsyncBaseScraper):
         if result:
             return result
 
-        logger.warning(
-            "Indian AI scraper returned 0 live results - using fallback content."
-        )
+        logger.warning("Indian AI scraper returned 0 live results - using fallback content.")
         return get_fallback_articles("indian_ai", limit)

@@ -48,12 +48,8 @@ class ReportGenerator:
         """Reserved for future async cleanup hooks."""
         return
 
-    async def generate_report(
-        self, category: str = "all", force_refresh: bool = False
-    ) -> str:
-        logger.info(
-            f"Generating report for category: {category} (Force: {force_refresh})"
-        )
+    async def generate_report(self, category: str = "all", force_refresh: bool = False) -> str:
+        logger.info(f"Generating report for category: {category} (Force: {force_refresh})")
 
         limit = self.config.ARTICLES_PER_SECTION
         date_str = datetime.now().strftime("%B %d, %Y")
@@ -173,9 +169,7 @@ class ReportGenerator:
                 else getattr(article, "source", "")
             )
 
-            safe_title = (
-                title_text[:150] + "..." if len(title_text) > 150 else title_text
-            )
+            safe_title = title_text[:150] + "..." if len(title_text) > 150 else title_text
             section += f"{index}. {safe_title}\n"
             if link:
                 section += f"   Link: {link}\n"

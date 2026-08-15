@@ -1,6 +1,5 @@
 """Static fallback content used when live sources are unavailable."""
 
-
 FALLBACK_CONTENT: dict[str, list[dict[str, str]]] = {
     "news": [
         {

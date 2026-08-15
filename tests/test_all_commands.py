@@ -76,9 +76,7 @@ async def test_summary_command():
     context.args = []
     update = make_update("/summary")
 
-    fake_articles = [
-        {"title": "Story A", "link": "https://example.com/a", "source": "Example"}
-    ]
+    fake_articles = [{"title": "Story A", "link": "https://example.com/a", "source": "Example"}]
 
     with patch.object(run_bot, "send_split_message", new=AsyncMock()) as mock_send:
         with patch(
