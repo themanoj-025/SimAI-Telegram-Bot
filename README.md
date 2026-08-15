@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/themanoj-025/AI-Telegram-News-Bot/actions"><img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/AI-Telegram-News-Bot/ci.yml?style=flat-square&label=CI" alt="CI Status" /></a>
-  <a href="https://github.com/themanoj-025/AI-Telegram-News-Bot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/themanoj-025/AI-Telegram-News-Bot?style=flat-square" alt="License" /></a>
-  <a href="https://github.com/themanoj-025/AI-Telegram-News-Bot/stargazers"><img src="https://img.shields.io/github/stars/themanoj-025/AI-Telegram-News-Bot?style=social" alt="Stars" /></a>
-  <a href="https://github.com/themanoj-025/AI-Telegram-News-Bot/issues"><img src="https://img.shields.io/github/issues/themanoj-025/AI-Telegram-News-Bot?style=flat-square" alt="Issues" /></a>
+  <a href="https://github.com/themanoj-025/SimAI-Telegram-Bot/actions"><img src="https://img.shields.io/github/actions/workflow/status/themanoj-025/SimAI-Telegram-Bot/ci.yml?style=flat-square&label=CI" alt="CI Status" /></a>
+  <a href="https://github.com/themanoj-025/SimAI-Telegram-Bot/blob/main/LICENSE"><img src="https://img.shields.io/github/license/themanoj-025/SimAI-Telegram-Bot?style=flat-square" alt="License" /></a>
+  <a href="https://github.com/themanoj-025/SimAI-Telegram-Bot/stargazers"><img src="https://img.shields.io/github/stars/themanoj-025/SimAI-Telegram-Bot?style=social" alt="Stars" /></a>
+  <a href="https://github.com/themanoj-025/SimAI-Telegram-Bot/issues"><img src="https://img.shields.io/github/issues/themanoj-025/SimAI-Telegram-Bot?style=flat-square" alt="Issues" /></a>
 </p>
 
 ---
@@ -75,8 +75,8 @@
 
 ```bash
 # Clone and configure
-git clone https://github.com/themanoj-025/AI-Telegram-News-Bot.git
-cd AI-Telegram-News-Bot
+git clone https://github.com/themanoj-025/SimAI-Telegram-Bot.git
+cd SimAI-Telegram-Bot
 cp .env.example .env
 # Edit .env with your TELEGRAM_BOT_TOKEN
 
@@ -91,8 +91,8 @@ docker compose logs -f
 
 ```bash
 # Clone and setup
-git clone https://github.com/themanoj-025/AI-Telegram-News-Bot.git
-cd AI-Telegram-News-Bot
+git clone https://github.com/themanoj-025/SimAI-Telegram-Bot.git
+cd SimAI-Telegram-Bot
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\Activate
 
@@ -341,9 +341,9 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 
 ## 📬 Support
 
-- 🐛 [Report Bug](https://github.com/themanoj-025/AI-Telegram-News-Bot/issues)
-- 💡 [Request Feature](https://github.com/themanoj-025/AI-Telegram-News-Bot/issues)
-- ⭐ [Star the Repo](https://github.com/themanoj-025/AI-Telegram-News-Bot)
+- 🐛 [Report Bug](https://github.com/themanoj-025/SimAI-Telegram-Bot/issues)
+- 💡 [Request Feature](https://github.com/themanoj-025/SimAI-Telegram-Bot/issues)
+- ⭐ [Star the Repo](https://github.com/themanoj-025/SimAI-Telegram-Bot)
 
 ---
 
@@ -354,3 +354,11 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) for deta
 <p align="center">
   If you find this bot useful, please give it a ⭐ star!
 </p>
+---
+
+## ⭐ Star History
+
+[![Last Commit](https://img.shields.io/github/last-commit/themanoj-025/SimAI-Telegram-Bot?style=flat-square)](https://github.com/themanoj-025/SimAI-Telegram-Bot)
+[![Contributors](https://img.shields.io/github/contributors/themanoj-025/SimAI-Telegram-Bot?style=flat-square)](https://github.com/themanoj-025/SimAI-Telegram-Bot/graphs/contributors)
+
+[![Star History Chart](https://api.star-history.com/svg?repos=themanoj-025/SimAI-Telegram-Bot&type=Date)](https://star-history.com/#SimAI-Telegram-Bot&Date)
