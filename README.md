@@ -25,6 +25,30 @@
 
 ---
 
+## 📋 Table of Contents
+
+- [✨ Features](#-features)
+- [🚀 Quick Start](#-quick-start)
+- [📋 Environment Variables](#-environment-variables)
+- [🎯 Commands](#-commands)
+- [🏗️ Architecture](#️-architecture)
+- [🛡️ Reliability Strategy](#️-reliability-strategy)
+- [📁 Project Structure](#-project-structure)
+- [🧪 Testing](#-testing)
+- [🚢 Deployment](#-deployment)
+- [🔧 Development](#-development)
+- [🗺️ Roadmap](#️-roadmap)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🙏 Acknowledgements](#-acknowledgements)
+- [📬 Support](#-support)
+
+---
+
+> 📸 **Screenshot placeholder:** Add a screenshot of a `/daily` brief delivered in Telegram.
+
+---
+
 ## ✨ Features
 
 | Feature | Description |
