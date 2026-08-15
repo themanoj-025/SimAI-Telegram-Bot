@@ -102,8 +102,8 @@ Module constants: `CACHE_EXPIRY_HOURS=6`, `ARTICLES_PER_SECTION=5`,
   (`Procfile`, `runtime.txt`).
 - **CI** (`.github/workflows/ci.yml`): lint (flake8), syntax (`py_compile`),
   test (root script suites), link-check, deploy-file verification, Docker
-  build + vulnerability scan. Auxiliary workflows: codeql, gitleaks, labeler,
-  stale, welcome, maintenance.
+  build + vulnerability scan. Auxiliary workflows: codeql, gitleaks,
+  maintenance (pip-audit + dependency-review).
 
 ## 7. Key design decisions
 
