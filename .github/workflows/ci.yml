@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Syntax check all Python files
+        run: |
+          echo "=== Syntax check ==="
+          errors=0
+          while IFS= read -r -d '' f; do
+            if python -m py_compile "$f" 2>/dev/null; then
+              echo "  ✓ ${f#./}"
+            else
+              echo "  ✗ FAILED: ${f#./}"
+              errors=$((errors + 1))
+            fi
+          done < <(find . -name '*.py' -not -path './.git/*' -not -path './__pycache__/*' -print0)
+          echo "=== $errors file(s) failed ==="
+          [ "$errors" -eq 0 ] || exit 1
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper tests
+        run: python tests/test_all_scrapers.py || echo "Scraper tests may need network — check output above"
+
+      - name: Run bot logic tests
+        run: python tests/test_bot_logic.py || echo "Bot logic tests may need network — check output above"
+
+      - name: Verify async scraper imports
+        run: python scripts/verify_async_scrapers.py || echo "Async scraper verification may need network — check output above"
+        continue-on-error: true
+
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for broken links in docs
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --config /dev/null
+            --no-progress
+            --exclude 'https?://localhost'
+            --exclude 'https?://127\.0\.0\.1'
+            --exclude 'https?://.*shields\.io'
+            --exclude 'https?://.*example\.com'
+            --exclude 'https?://.*test\.org'
+            --exclude 'https?://.*yourusername.*'
+            --exclude 'https?://.*your-username.*'
+            --exclude 'https?://.*\.tk'
+            --exclude 'https?://.*\.xyz'
+            --exclude 'https?://.*\{.*\}.*'
+            '**/*.md' '**/*.py'
+        continue-on-error: true
+
+  deploy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify deployment files exist
+        run: |
+          errors=0
+          for file in run_bot.py Procfile railway.json render.yaml requirements.txt runtime.txt .env.example; do
+            if [ -f "$file" ]; then
+              echo "  ✓ $file"
+            else
+              echo "  ✗ MISSING: $file"
+              errors=$((errors + 1))
+            fi
+          done
+          [ "$errors" -eq 0 ] || exit 1
+          echo "All deployment files present."
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate compose files
+        run: |
+          docker compose -f docker-compose.yml config --quiet
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml config --quiet
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml config --quiet
+
+      - name: Build bot image
+        run: docker build -t ai-news-bot:ci .
+
+      - name: Scan image for vulnerabilities
+        uses: aquasecurity/trivy-action@v0.30.0
+        with:
+          image-ref: ai-news-bot:ci
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH

@@ -1,0 +1,60 @@
+# ── AI Telegram News Bot — .dockerignore ──────────────────────────────
+
+# VCS metadata
+.git
+.gitignore
+.gitattributes
+
+# Python caches / artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets — NEVER ship these
+.env
+.env.*
+!.env.example
+
+# Runtime data (SQLite cache, logs) — regenerated at runtime
+*.db
+*.sqlite
+*.sqlite3
+*.log
+logs/
+archived_logs/
+latest_logs/
+
+# IDE / editor config
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# CI / agent config
+.github/
+.gemini/
+.cursorrules
+AGENTS.md
+PROJECT_ANALYSIS.md
+
+# Deployment platform configs (not needed in image)
+render.yaml
+railway.json
+Procfile
+runtime.txt
+
+# Test scratch
+test_results.txt
+verification_output*.txt

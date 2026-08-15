@@ -1,0 +1,91 @@
+# ──────────────────────────────────────────────
+#  SECRETS & ENVIRONMENT  (NEVER COMMIT THESE)
+# ──────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ──────────────────────────────────────────────
+#  PYTHON
+# ──────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+
+# ──────────────────────────────────────────────
+#  VIRTUAL ENVIRONMENTS
+# ──────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.conda/
+.sixth/
+
+# ──────────────────────────────────────────────
+#  DATABASE / CACHE  (regenerated at runtime)
+# ──────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ──────────────────────────────────────────────
+#  LOG FILES
+# ──────────────────────────────────────────────
+*.log
+logs/
+ai_daily_bot.log
+bot.log
+
+# ──────────────────────────────────────────────
+#  TEST ARTIFACTS & SCRATCH
+# ──────────────────────────────────────────────
+test_results.txt
+verification_output.txt
+verification_output_v2.txt
+
+# ──────────────────────────────────────────────
+#  IDE & EDITOR
+# ──────────────────────────────────────────────
+.vscode/*
+!.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# ──────────────────────────────────────────────
+#  OS FILES
+# ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ──────────────────────────────────────────────
+#  NODE (not used here but safe to include)
+# ──────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ──────────────────────────────────────────────
+#  TEMPORARY FILES
+# ──────────────────────────────────────────────
+*.tmp
+*.temp
+.cache/
+
+.gemini/
+.cursorrules
+
+CLAUDE.md

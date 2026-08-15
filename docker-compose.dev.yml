@@ -1,0 +1,22 @@
+# ═══════════════════════════════════════════════════════════════════════
+# AI Telegram News Bot — Development override
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Adds: source bind mounts for fast iteration + test tooling image.
+# NEVER use in production.
+# ═══════════════════════════════════════════════════════════════════════
+
+services:
+  bot:
+    build:
+      target: dev
+    volumes:
+      - ./config:/app/config
+      - ./scrapers:/app/scrapers
+      - ./services:/app/services
+      - ./utils:/app/utils
+      - ./run_bot.py:/app/run_bot.py
+      - botdata:/app/data
+      - botlogs:/app/logs
+    command: python run_bot.py

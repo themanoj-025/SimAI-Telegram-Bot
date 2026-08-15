@@ -1,0 +1,34 @@
+# ═══════════════════════════════════════════════════════════════════════
+# AI Telegram News Bot — Docker Compose (base)
+#
+# Single-service stack: the bot polls Telegram outbound — no host ports,
+# no database. A named volume persists the SQLite cache across restarts.
+#
+# Usage:
+#   docker compose up -d
+# ═══════════════════════════════════════════════════════════════════════
+
+name: ai-news-bot
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    # Secrets come from the caller's environment (.env) — never baked in.
+    environment:
+      TELEGRAM_BOT_TOKEN: "${TELEGRAM_BOT_TOKEN:-}"
+      TELEGRAM_CHAT_ID: "${TELEGRAM_CHAT_ID:-}"
+      GEMINI_API_KEY: "${GEMINI_API_KEY:-}"
+      # Keep the SQLite cache + log inside the persistent volume
+      DATABASE_PATH: "/app/data/bot_cache.db"
+      LOG_FILE: "/app/logs/ai_daily_bot.log"
+    volumes:
+      - botdata:/app/data
+      - botlogs:/app/logs
+    # Healthcheck inherited from the image (liveness probe on run_bot.py)
+
+volumes:
+  botdata:   # SQLite cache — keep for cache continuity; safe to delete
+  botlogs:   # Log output — safe to delete

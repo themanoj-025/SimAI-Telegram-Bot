@@ -1,0 +1,31 @@
+import os
+import sys
+
+# Ensure the repository root is importable regardless of where this script
+# is invoked from (repo root or a subdirectory such as scripts/).
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import asyncio
+
+from services.summarizer import Summarizer
+
+
+async def test_summarizer():
+    print("\nTesting Summarizer...")
+    summarizer = Summarizer()
+    articles = [
+        {
+            "title": "OpenAI announces a new multimodal update",
+            "link": "https://example.com/openai",
+        },
+        {
+            "title": "Google DeepMind releases a new robotics model",
+            "link": "https://example.com/deepmind",
+        },
+    ]
+    summary = await summarizer.summarize_articles(articles)
+    print(f"Summary:\n{summary}")
+
+
+if __name__ == "__main__":
+    asyncio.run(test_summarizer())
