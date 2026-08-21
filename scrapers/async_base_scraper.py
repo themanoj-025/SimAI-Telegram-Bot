@@ -14,7 +14,7 @@ logger = setup_logger(__name__)
 
 
 class AsyncBaseScraper:
-    def __init__(self):
+    def __init__(self) -> None:
         self.config = Config()
         self.headers = {"User-Agent": "AI Daily Bot/1.0"}
 

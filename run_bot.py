@@ -49,7 +49,7 @@ def _get_command_query(
     return message_text
 
 
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     welcome = """*AI Daily Intelligence Bot*
 
 *Core Commands:*
@@ -81,11 +81,11 @@ _Fresh AI updates every 2 hours._"""
     await update.message.reply_text(welcome, parse_mode="Markdown")
 
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await start_command(update, context)
 
 
-async def generic_command(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str):
+async def generic_command(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str) -> None:
     await update.message.reply_text("Fetching updates...")
     try:
         report = await report_generator.generate_report(category)
@@ -95,11 +95,11 @@ async def generic_command(update: Update, context: ContextTypes.DEFAULT_TYPE, ca
         await update.message.reply_text(f"Error fetching {category}. Try again.")
 
 
-async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await generic_command(update, context, "all")
 
 
-async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Generating AI summary...")
     try:
         from scrapers.news_scraper import NewsScraper
@@ -115,7 +115,7 @@ async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Error generating summary.")
 
 
-async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     args = _get_command_query(update, context, "compare")
     if not args:
         await update.message.reply_text(
@@ -134,7 +134,7 @@ async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Error generating comparison. Try again.")
 
 
-async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     role = _get_command_query(update, context, "roadmap") or "ai engineer"
     await update.message.reply_text("Building your AI roadmap...")
     try:
@@ -145,7 +145,7 @@ async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Error generating roadmap. Try again.")
 
 
-async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     filter_term = _get_command_query(update, context, "leaderboard")
     await update.message.reply_text("Fetching AI model leaderboard...")
     try:
@@ -156,7 +156,7 @@ async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text("Error fetching leaderboard. Try again.")
 
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message or not update.message.text:
         return
 
@@ -185,13 +185,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Try /daily, /compare, /roadmap, /leaderboard, or /help.")
 
 
-def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list):
+def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list) -> None:
     """Create a scheduler callback that broadcasts fresh content safely from a worker thread."""
 
-    def callback():
+    def callback() -> None:
         logger.info("2-hour auto-refresh triggered - generating a fresh AI Daily Brief...")
 
-        async def _run():
+        async def _run() -> None:
             try:
                 report = await report_generator.generate_report("all", force_refresh=True)
                 max_len = 4000
@@ -217,7 +217,7 @@ def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list):
     return callback
 
 
-def main():
+def main() -> None:
     config = Config()
     logger.info("Starting bot...")
 
@@ -290,8 +290,8 @@ def main():
         "twitter",
     ]
 
-    def create_handler(category_name):
-        async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    def create_handler(category_name) -> None:
+        async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await generic_command(update, context, category_name)
 
         return handler

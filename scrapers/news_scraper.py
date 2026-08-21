@@ -11,7 +11,7 @@ logger = setup_logger(__name__)
 
 
 class Article:
-    def __init__(self, title: str, link: str, source: str, published: str = ""):
+    def __init__(self, title: str, link: str, source: str, published: str = "") -> None:
         self.title = title
         self.link = link
         self.source = source
@@ -27,14 +27,14 @@ class Article:
 
 
 class NewsScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.feeds = self.config.RSS_FEEDS.get("news", [])
 
     async def fetch_news(self, limit: int = 5) -> list[Article]:
         articles = []
 
-        async def fetch_feed(url):
+        async def fetch_feed(url) -> None:
             try:
                 content = await self.fetch_url(url)
                 if not content:
@@ -87,7 +87,7 @@ class NewsScraper(AsyncBaseScraper):
 
 
 class ArxivScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.feeds = self.config.RSS_FEEDS.get("arxiv", [])
 
@@ -130,7 +130,7 @@ class ArxivScraper(AsyncBaseScraper):
 
 
 class BlogScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.feeds = self.config.RSS_FEEDS.get("blogs", [])
 
@@ -172,7 +172,7 @@ class BlogScraper(AsyncBaseScraper):
 
 
 class YouTubeScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.feeds = self.config.RSS_FEEDS.get("youtube", [])
 
@@ -181,7 +181,7 @@ class YouTubeScraper(AsyncBaseScraper):
         feeds_shuffled = self.feeds.copy()
         random.shuffle(feeds_shuffled)
 
-        async def fetch_yt_feed(url):
+        async def fetch_yt_feed(url) -> None:
             try:
                 content = await self.fetch_url(url, timeout=5)
                 if not content:
@@ -250,7 +250,7 @@ class YouTubeScraper(AsyncBaseScraper):
 
 
 class TutorialScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.feeds = self.config.RSS_FEEDS.get("tutorials", [])
 

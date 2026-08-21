@@ -17,7 +17,7 @@ logger = setup_logger(__name__)
 
 
 class Summarizer:
-    def __init__(self):
+    def __init__(self) -> None:
         self.config = Config()
         self.gemini_key = self.config.GEMINI_API_KEY
 
@@ -29,7 +29,7 @@ class Summarizer:
             self.model = None
             logger.warning("GEMINI_API_KEY not found. Falling back to simple summaries.")
 
-    async def summarize_articles(self, articles):
+    async def summarize_articles(self, articles) -> None:
         if not articles:
             return "No articles are available to summarize right now."
 
@@ -55,7 +55,7 @@ class Summarizer:
             logger.error(f"Error generating summary: {type(e).__name__}: {e}")
             return self.get_simple_summary(articles)
 
-    def get_simple_summary(self, articles):
+    def get_simple_summary(self, articles) -> None:
         """Fallback: just list titles if LLM is unavailable."""
         summary = "*Today's Top AI Stories:*\n\n"
         for i, article in enumerate(articles[:10], 1):
