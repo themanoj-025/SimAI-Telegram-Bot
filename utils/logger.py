@@ -5,7 +5,7 @@ from pathlib import Path
 from config.config import Config
 
 
-def _ensure_utf8_console():
+def _ensure_utf8_console() -> None:
     for stream_name in ("stdout", "stderr"):
         stream = getattr(sys, stream_name, None)
         if stream and hasattr(stream, "reconfigure"):

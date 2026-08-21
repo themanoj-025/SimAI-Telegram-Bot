@@ -13,7 +13,7 @@ logger = setup_logger(__name__)
 
 
 class IndianAINewsScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.rss_feeds = self.config.RSS_FEEDS.get("indian_ai", [])
         self.sources = self.config.RSS_FEEDS.get("indian_ai_sources", {})
