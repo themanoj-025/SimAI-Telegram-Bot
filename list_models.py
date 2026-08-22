@@ -3,7 +3,7 @@ import google.generativeai as genai
 from config.config import Config
 
 
-def list_models():
+def list_models() -> None:
     config = Config()
     if not config.GEMINI_API_KEY:
         print("No API key.")

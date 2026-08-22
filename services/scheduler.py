@@ -9,13 +9,13 @@ logger = setup_logger(__name__)
 
 
 class SchedulerService:
-    def __init__(self, refresh_callback, daily_report_callback=None):
+    def __init__(self, refresh_callback, daily_report_callback=None) -> None:
         self.refresh_callback = refresh_callback
         self.daily_report_callback = daily_report_callback
         self.config = Config()
         self.scheduler = BackgroundScheduler()
 
-    def start(self):
+    def start(self) -> None:
         # 2-hour refresh (changed from 6 hours)
         self.scheduler.add_job(
             self.refresh_callback,
@@ -40,10 +40,10 @@ class SchedulerService:
         self.scheduler.start()
         logger.info("Scheduler started — auto-broadcast every 2 hours, 24/7.")
 
-    def stop(self):
+    def stop(self) -> None:
         self.scheduler.shutdown()
         logger.info("Scheduler stopped.")
 
-    def run_refresh_now(self):
+    def run_refresh_now(self) -> None:
         logger.info("Manual refresh triggered!")
         self.refresh_callback()

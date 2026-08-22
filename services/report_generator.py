@@ -25,7 +25,7 @@ logger = setup_logger(__name__)
 
 
 class ReportGenerator:
-    def __init__(self):
+    def __init__(self) -> None:
         self.config = Config()
         self.news_scraper = NewsScraper()
         self.arxiv_scraper = ArxivScraper()
@@ -44,7 +44,7 @@ class ReportGenerator:
         self.roadmap_scraper = AIRoadmapScraper()
         self.leaderboard_scraper = AILeaderboardScraper()
 
-    async def cleanup(self):
+    async def cleanup(self) -> None:
         """Reserved for future async cleanup hooks."""
         return
 

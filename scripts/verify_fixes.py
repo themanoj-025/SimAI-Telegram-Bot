@@ -10,7 +10,7 @@ import asyncio
 from services.summarizer import Summarizer
 
 
-async def test_summarizer():
+async def test_summarizer() -> None:
     print("\nTesting Summarizer...")
     summarizer = Summarizer()
     articles = [

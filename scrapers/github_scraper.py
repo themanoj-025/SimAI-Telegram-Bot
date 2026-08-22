@@ -8,7 +8,7 @@ logger = setup_logger(__name__)
 
 
 class GitHubScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.trending_url = "https://github.com/trending?since=weekly"
 

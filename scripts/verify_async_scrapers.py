@@ -15,7 +15,7 @@ def safe_console_text(text: str) -> str:
     return text.encode("ascii", errors="replace").decode("ascii")
 
 
-async def test_scrapers():
+async def test_scrapers() -> None:
     print("Starting Async Scrapers Verification...")
 
     report_gen = ReportGenerator()

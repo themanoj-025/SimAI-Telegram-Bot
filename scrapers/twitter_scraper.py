@@ -61,7 +61,7 @@ STATIC_AI_TWEETS = [
 
 
 class TwitterScraper(AsyncBaseScraper):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.rsshub_instances = [
             "https://rsshub.app",
