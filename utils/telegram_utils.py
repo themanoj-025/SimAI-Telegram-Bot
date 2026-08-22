@@ -8,7 +8,7 @@ from utils.logger import setup_logger
 logger = setup_logger(__name__)
 
 
-async def send_split_message(update: Update, text: str, parse_mode: str = ParseMode.MARKDOWN):
+async def send_split_message(update: Update, text: str, parse_mode: str = ParseMode.MARKDOWN) -> None:
     """
     Splits a long message into multiple parts if it exceeds Telegram's limit (4096 characters).
     """

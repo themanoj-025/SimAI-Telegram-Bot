@@ -3,7 +3,7 @@ import requests
 from config.config import Config
 
 
-def get_chat_id():
+def get_chat_id() -> None:
     bot_token = Config.TELEGRAM_BOT_TOKEN
 
     url = f"https://api.telegram.org/bot{bot_token}/getUpdates"
