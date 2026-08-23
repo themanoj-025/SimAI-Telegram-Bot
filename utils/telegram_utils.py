@@ -1,5 +1,6 @@
 import asyncio
 
+import telegram.error
 from telegram import Update
 from telegram.constants import ParseMode
 
