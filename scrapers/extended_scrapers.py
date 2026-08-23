@@ -45,7 +45,7 @@ class ExtendedScraper(AsyncBaseScraper):
                             "published": entry.get("published", ""),
                         }
                         articles.append(item)
-                except Exception as e:
+                except (httpx.HTTPError, httpx.TimeoutException, ValueError, KeyError) as e:
                     logger.error(f"Error fetching {category} from {url}: {e}")
 
         # Deduplicate

@@ -39,7 +39,7 @@ class CacheManager:
                 """
                 )
                 conn.commit()
-        except Exception as e:
+        except sqlite3.Error as e:
             logger.error(f"Error initializing SQLite cache database: {e}")
 
     def get_cached_data(self, category, max_age_hours=6) -> None:
@@ -58,7 +58,7 @@ class CacheManager:
                     if datetime.now() - last_updated < timedelta(hours=max_age_hours):
                         return json.loads(data_str)
             return None
-        except Exception as e:
+        except (sqlite3.Error, json.JSONDecodeError) as e:
             logger.error(f"Error reading from cache: {e}")
             return None
 
@@ -72,7 +72,7 @@ class CacheManager:
                 )
                 row = cursor.fetchone()
                 return json.loads(row[0]) if row else None
-        except Exception as e:
+        except (sqlite3.Error, json.JSONDecodeError) as e:
             logger.error(f"Error fetching latest cached data: {e}")
             return None
 
@@ -86,7 +86,7 @@ class CacheManager:
                     (category, json.dumps(data), datetime.now().isoformat()),
                 )
                 conn.commit()
-        except Exception as e:
+        except sqlite3.Error as e:
             logger.error(f"Error updating cache: {e}")
 
     def is_duplicate(self, category, item_id) -> None:
@@ -98,7 +98,7 @@ class CacheManager:
                     (category, item_id),
                 )
                 return cursor.fetchone() is not None
-        except Exception as e:
+        except sqlite3.Error as e:
             logger.error(f"Error checking duplicate: {e}")
             return False
 
@@ -111,7 +111,7 @@ class CacheManager:
                     (category, item_id, datetime.now().isoformat()),
                 )
                 conn.commit()
-        except Exception as e:
+        except sqlite3.Error as e:
             logger.error(f"Error marking item as seen: {e}")
 
     def clear_old_seen_items(self, days=30) -> None:
@@ -121,5 +121,5 @@ class CacheManager:
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM seen_items WHERE first_seen < ?", (cutoff,))
                 conn.commit()
-        except Exception as e:
+        except sqlite3.Error as e:
             logger.error(f"Error clearing old seen items: {e}")

@@ -90,7 +90,7 @@ async def generic_command(update: Update, context: ContextTypes.DEFAULT_TYPE, ca
     try:
         report = await report_generator.generate_report(category)
         await send_split_message(update, report)
-    except Exception as e:
+    except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in {category} command: {e}")
         await update.message.reply_text(f"Error fetching {category}. Try again.")
 
@@ -110,7 +110,7 @@ async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         ]
         summary = await summarizer.summarize_articles(articles)
         await send_split_message(update, f"*AI News Summary*\n\n{summary}")
-    except Exception as e:
+    except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in summary command: {e}")
         await update.message.reply_text("Error generating summary.")
 
@@ -129,7 +129,7 @@ async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     try:
         result = await report_generator.generate_compare(args)
         await send_split_message(update, result)
-    except Exception as e:
+    except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in compare command: {e}")
         await update.message.reply_text("Error generating comparison. Try again.")
 
@@ -140,7 +140,7 @@ async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     try:
         result = await report_generator.generate_roadmap(role)
         await send_split_message(update, result)
-    except Exception as e:
+    except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in roadmap command: {e}")
         await update.message.reply_text("Error generating roadmap. Try again.")
 
@@ -151,7 +151,7 @@ async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE
     try:
         result = await report_generator.generate_leaderboard(filter_term)
         await send_split_message(update, result)
-    except Exception as e:
+    except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in leaderboard command: {e}")
         await update.message.reply_text("Error fetching leaderboard. Try again.")
 
@@ -202,11 +202,11 @@ def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list) -
                         await app.bot.send_message(
                             chat_id=chat_id, text=chunk, parse_mode="Markdown"
                         )
-                    except Exception as e:
+                    except (RuntimeError, OSError) as e:
                         logger.error(f"Auto-broadcast chunk send failed: {e}")
 
                 logger.info("Auto-broadcast sent successfully.")
-            except Exception as e:
+            except (RuntimeError, OSError, ValueError) as e:
                 logger.error(f"Auto-broadcast error: {e}")
 
         if loop_holder and loop_holder[0] is not None:
@@ -330,7 +330,7 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             logger.info("Bot stopped by user.")
             break
-        except Exception as e:
+        except (RuntimeError, OSError, ValueError) as e:
             logger.error(f"Bot crashed: {e}")
             if attempt < max_retries:
                 wait = retry_delay * (2 ** (attempt - 1))  # exponential backoff
