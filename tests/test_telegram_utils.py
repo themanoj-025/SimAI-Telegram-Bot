@@ -1,7 +1,6 @@
 """Tests for telegram_utils — message splitting and sending."""
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 

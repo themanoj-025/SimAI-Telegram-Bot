@@ -1,11 +1,8 @@
 """Tests for logger — setup_logger and _ensure_utf8_console."""
 
 import logging
-import os
 from pathlib import Path
 from unittest.mock import patch
-
-import pytest
 
 from utils.logger import setup_logger
 

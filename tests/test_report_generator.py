@@ -1,6 +1,5 @@
 """Tests for ReportGenerator formatting and Article class."""
 
-import pytest
 
 from scrapers.news_scraper import Article
 from services.report_generator import ReportGenerator

@@ -1,6 +1,5 @@
 """Tests for fallback_data — static fallback content provider."""
 
-import pytest
 
 from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
 
