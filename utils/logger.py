@@ -11,7 +11,7 @@ def _ensure_utf8_console() -> None:
         if stream and hasattr(stream, "reconfigure"):
             try:
                 stream.reconfigure(encoding="utf-8", errors="replace")
-            except Exception:
+            except (AttributeError, OSError):
                 pass
 
 

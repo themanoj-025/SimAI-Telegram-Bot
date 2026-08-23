@@ -54,7 +54,7 @@ async def test_scrapers() -> None:
         print("Summary of first 500 chars:")
         print(safe_console_text(report[:500]) + "...")
 
-    except Exception as e:
+    except (RuntimeError, OSError, ValueError) as e:
         print(f"ERROR: Verification failed: {e}")
         import traceback
 

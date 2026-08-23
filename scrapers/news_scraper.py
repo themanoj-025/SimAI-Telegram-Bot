@@ -52,7 +52,7 @@ class NewsScraper(AsyncBaseScraper):
                         )
                     )
                 return res
-            except Exception as e:
+            except (ValueError, KeyError, AttributeError) as e:
                 logger.error(f"Error fetching news from {url}: {e}")
                 return []
 
@@ -110,7 +110,7 @@ class ArxivScraper(AsyncBaseScraper):
                             published=entry.get("published", ""),
                         )
                     )
-            except Exception as e:
+            except (ValueError, KeyError, AttributeError) as e:
                 logger.error(f"Error fetching arXiv papers from {feed_url}: {e}")
 
         result = articles[:limit]
@@ -152,7 +152,7 @@ class BlogScraper(AsyncBaseScraper):
                             published=entry.get("published", ""),
                         )
                     )
-            except Exception as e:
+            except (ValueError, KeyError, AttributeError) as e:
                 logger.error(f"Error fetching blogs from {feed_url}: {e}")
 
         result = articles[:limit]
@@ -199,7 +199,7 @@ class YouTubeScraper(AsyncBaseScraper):
                         )
                     )
                 return res
-            except Exception as e:
+            except (ValueError, KeyError, AttributeError) as e:
                 logger.debug(f"YouTube feed skipped ({url}): {e}")
                 return []
 
@@ -211,7 +211,7 @@ class YouTubeScraper(AsyncBaseScraper):
 
         try:
             articles.sort(key=lambda x: x.published, reverse=True)
-        except Exception:
+        except (TypeError, ValueError, AttributeError):
             pass
 
         result = articles[:limit]

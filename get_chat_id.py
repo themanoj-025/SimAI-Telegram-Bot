@@ -31,7 +31,7 @@ def get_chat_id() -> None:
                 print("No messages found. Make sure you've sent a message to the bot first!")
         else:
             print(f"Error: {data.get('description')}")
-    except Exception as e:
+    except (requests.RequestException, ValueError, KeyError) as e:
         print(f"Error: {e}")
 
 

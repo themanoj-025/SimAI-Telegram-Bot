@@ -112,7 +112,7 @@ class TwitterScraper(AsyncBaseScraper):
                             }
                         )
                     return items
-                except Exception:
+                except (ValueError, KeyError, AttributeError):
                     continue
             return []
 

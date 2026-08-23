@@ -36,7 +36,7 @@ async def test_all_categories():
                     print(f"  [-] {category}: returned an empty report")
                 else:
                     print(f"  [+] {category}: working")
-            except Exception as e:
+            except (RuntimeError, OSError, ValueError) as e:
                 print(f"  [!] {category}: exception - {e}")
     finally:
         await generator.cleanup()

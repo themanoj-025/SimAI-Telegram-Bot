@@ -66,7 +66,7 @@ async def send_split_message(update: Update, text: str, parse_mode: str = ParseM
             # Small delay to prevent rate limit issues
             if i < len(parts) - 1:
                 await asyncio.sleep(0.5)
-        except Exception as e:
+        except (telegram.error.TelegramError, OSError) as e:
             logger.error(f"Error sending part {i}: {e}")
             # Fallback without markdown if it fails
             await update.message.reply_text(part)

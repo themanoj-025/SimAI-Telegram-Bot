@@ -33,7 +33,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
                 logger.info(f"Fetched {url} - Status: {response.status_code}")
                 response.raise_for_status()
                 return response.text
-            except Exception as e:
+            except (httpx.HTTPError, httpx.TimeoutException) as e:
                 logger.error(f"Error fetching {url}: {e}")
                 return None
 
@@ -60,7 +60,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
                 )
             logger.info(f"Fetched {len(articles)} articles from RSS: {url}")
             return articles
-        except Exception as e:
+        except (ValueError, KeyError, AttributeError) as e:
             logger.error(f"Error parsing RSS {url}: {e}")
             return []
 
@@ -128,7 +128,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
                         break
 
             logger.info(f"Fetched {len(articles)} articles from HTML: {url}")
-        except Exception as e:
+        except (ValueError, KeyError, AttributeError) as e:
             logger.error(f"Error parsing HTML {url}: {e}")
 
         return articles

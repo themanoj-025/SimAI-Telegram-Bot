@@ -55,7 +55,7 @@ class GitHubScraper(AsyncBaseScraper):
                         "published": "",
                     }
                 )
-            except Exception as e:
+            except (ValueError, KeyError, AttributeError, TypeError) as e:
                 logger.warning(f"Error parsing GitHub repo: {e}")
 
             if len(articles) >= limit:

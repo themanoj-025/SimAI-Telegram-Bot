@@ -51,7 +51,7 @@ class Summarizer:
                 timeout=8,
             )
             return response.text
-        except Exception as e:
+        except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Error generating summary: {type(e).__name__}: {e}")
             return self.get_simple_summary(articles)
 
