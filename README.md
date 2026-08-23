@@ -45,7 +45,14 @@
 
 ---
 
-> 📸 **Screenshot placeholder:** Add a screenshot of a `/daily` brief delivered in Telegram.
+## 📸 Screenshots
+
+> _To add screenshots: run the bot, capture your screen, save images to `docs/assets/`, and reference them below._
+>
+> **Suggested screenshots:**
+> - `/daily` brief delivered in Telegram
+> - `/compare` model comparison output
+> - Bot responding to a free-text query
 
 ---
 
