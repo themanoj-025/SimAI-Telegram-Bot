@@ -1,9 +1,6 @@
 """Tests for CacheManager — SQLite-based cache and dedup store."""
 
-import json
-import os
 import sqlite3
-import tempfile
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
