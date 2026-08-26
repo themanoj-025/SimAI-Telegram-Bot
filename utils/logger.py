@@ -18,7 +18,7 @@ try:
         "_request_id", default=""
     )
 except ImportError:
-    _request_id_var = None  # type: ignore[assignment]
+    _request_id_var = cast(Any, None)
 
 
 def set_request_id(request_id: str) -> None:
