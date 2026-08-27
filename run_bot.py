@@ -13,6 +13,7 @@ from telegram.ext import (
 )
 
 from config.config import Config
+from health_server import set_readiness, start_health_server
 from services.report_generator import ReportGenerator
 from services.scheduler import SchedulerService
 from services.summarizer import Summarizer
@@ -228,6 +229,7 @@ def main() -> None:
 
     async def post_init(application: Application) -> None:
         loop_holder[0] = asyncio.get_running_loop()
+        set_readiness(bot_connected=True, scheduler_running=True)
         commands = [
             BotCommand("daily", "Full daily intelligence report"),
             BotCommand("summary", "AI-powered news summary"),
@@ -252,6 +254,7 @@ def main() -> None:
         logger.info("Telegram menu commands set successfully.")
 
     async def post_stop(application: Application) -> None:
+        set_readiness(bot_connected=False, scheduler_running=False)
         logger.info("Shutting down - cleaning up scrapers...")
         await report_generator.cleanup()
 
@@ -312,6 +315,10 @@ def main() -> None:
     scheduler.start()
 
     logger.info("Bot running with 2-hour auto-refresh enabled.")
+
+    # Start the health check server in a background thread for Docker/k8s probes.
+    start_health_server()
+
     app.run_polling()
 
 
