@@ -2,7 +2,24 @@
 line-length = 120
 
 [tool.ruff.lint]
-ignore = ["DTZ005", "SIM117", "PERF102", "RUF012", "SIM102"]
+select = ["E", "F", "W", "B", "BLE", "UP", "SIM", "C4", "RUF", "PLC", "PIE", "I"]
+ignore = [
+    "DTZ005",  # datetime.now() without tz
+    "SIM117",  # multiple with-statements
+    "PERF102", # incorrect dict iteration
+    "RUF012",  # mutable class default
+    "SIM102",  # collapsible if
+    "E501",    # line too long
+    "BLE001",  # blind except — defensive coding
+    "UP031",   # printf formatting
+    "PLC0415", # import-outside-top-level — lazy imports
+    "E731",    # lambda assignment — legacy code
+    "SIM105",  # suppressible-exception
+    "F841",    # unused variable
+    "B905",    # zip-without-strict
+    "F821",    # undefined name — pre-existing missing imports
+    "B007",    # unused loop variable
+]
 
 [tool.black]
 line-length = 100

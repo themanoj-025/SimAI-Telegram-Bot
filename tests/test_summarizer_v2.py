@@ -1,7 +1,5 @@
 """Tests for summarizer service."""
 
-import pytest
-from unittest.mock import MagicMock, patch
 
 from services.summarizer import Summarizer
 

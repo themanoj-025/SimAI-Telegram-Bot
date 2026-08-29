@@ -1,6 +1,5 @@
 """Tests for AI-Telegram-News-Bot report generator and fallback data."""
 
-import pytest
 
 from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
 
