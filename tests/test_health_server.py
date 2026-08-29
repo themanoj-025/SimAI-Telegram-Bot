@@ -1,7 +1,5 @@
 """Tests for health check server."""
 
-import pytest
-from unittest.mock import MagicMock, patch
 
 from health_server import HealthServer
 
