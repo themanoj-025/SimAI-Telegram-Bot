@@ -1,7 +1,5 @@
 """Tests for report generator service."""
 
-import pytest
-from unittest.mock import MagicMock
 
 from services.report_generator import ReportGenerator
 

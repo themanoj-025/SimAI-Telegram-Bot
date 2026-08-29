@@ -1,8 +1,7 @@
 """Tests for fallback data provider."""
 
-import pytest
 
-from scrapers.fallback_data import get_fallback_articles, FALLBACK_ARTICLES
+from scrapers.fallback_data import FALLBACK_ARTICLES, get_fallback_articles
 
 
 class TestFallbackData:

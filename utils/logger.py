@@ -1,14 +1,11 @@
 import json
 import logging
 import sys
-import threading
-import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from config.config import Config
-
 
 # Async-safe request ID via contextvars
 try:

@@ -1,8 +1,7 @@
 """Tests for telegram utility functions."""
 
-import pytest
 
-from utils.telegram_utils import format_message, truncate_text, escape_markdown
+from utils.telegram_utils import escape_markdown, format_message, truncate_text
 
 
 class TestFormatMessage:
