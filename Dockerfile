@@ -12,7 +12,7 @@
 # ═══════════════════════════════════════════════════════════════════════
 
 # ── Base stage ─────────────────────────────────────────────────────────
-FROM python:3.13-slim AS base
+FROM python:3.14-slim AS base
 
 LABEL org.opencontainers.image.title="AI Daily Telegram News Bot"
 LABEL org.opencontainers.image.description="AI-powered daily intelligence Telegram bot with 2-hour auto-refresh"
