@@ -7,7 +7,7 @@ from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
 class TestFallbackData:
     """Tests for the static fallback content system."""
 
-    def test_fallback_has_all_categories(self):
+    def test_fallback_has_all_categories(self) -> None:
         """Every expected category should have fallback content."""
         expected = [
             "news", "arxiv", "blogs", "tools", "jobs",
@@ -16,7 +16,7 @@ class TestFallbackData:
         for cat in expected:
             assert cat in FALLBACK_CONTENT, f"Missing fallback for '{cat}'"
 
-    def test_fallback_articles_have_required_keys(self):
+    def test_fallback_articles_have_required_keys(self) -> None:
         """Every fallback article must have title, link, source."""
         for category, articles in FALLBACK_CONTENT.items():
             for i, article in enumerate(articles):
@@ -24,7 +24,7 @@ class TestFallbackData:
                 assert "link" in article, f"{category}[{i}] missing 'link'"
                 assert "source" in article, f"{category}[{i}] missing 'source'"
 
-    def test_fallback_articles_have_valid_urls(self):
+    def test_fallback_articles_have_valid_urls(self) -> None:
         """All fallback links should be valid URLs."""
         for category, articles in FALLBACK_CONTENT.items():
             for i, article in enumerate(articles):
@@ -33,25 +33,25 @@ class TestFallbackData:
                     f"{category}[{i}] link '{link}' doesn't start with http"
                 )
 
-    def test_get_fallback_articles_returns_list(self):
+    def test_get_fallback_articles_returns_list(self) -> None:
         result = get_fallback_articles("news", 5)
         assert isinstance(result, list)
 
-    def test_get_fallback_articles_respects_limit(self):
+    def test_get_fallback_articles_respects_limit(self) -> None:
         result = get_fallback_articles("news", 3)
         assert len(result) <= 3
 
-    def test_get_fallback_articles_unknown_category(self):
+    def test_get_fallback_articles_unknown_category(self) -> None:
         result = get_fallback_articles("nonexistent_category_xyz", 5)
         assert result == []
 
-    def test_get_fallback_articles_all_categories(self):
+    def test_get_fallback_articles_all_categories(self) -> None:
         """get_fallback_articles should work for every category."""
         for category in FALLBACK_CONTENT:
             result = get_fallback_articles(category, 5)
             assert isinstance(result, list), f"Failed for category '{category}'"
 
-    def test_fallback_articles_are_dicts(self):
+    def test_fallback_articles_are_dicts(self) -> None:
         result = get_fallback_articles("news", 5)
         for article in result:
             assert isinstance(article, dict)
@@ -60,7 +60,7 @@ class TestFallbackData:
 class TestReportGeneratorFormat:
     """Tests for ReportGenerator._format_section."""
 
-    def test_format_section_with_articles(self):
+    def test_format_section_with_articles(self) -> None:
         from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
@@ -74,7 +74,7 @@ class TestReportGeneratorFormat:
         assert "Another Article" in result
         assert "https://example.com" in result
 
-    def test_format_section_empty_articles(self):
+    def test_format_section_empty_articles(self) -> None:
         from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
@@ -82,7 +82,7 @@ class TestReportGeneratorFormat:
         assert "*Empty Section*" in result
         assert "No updates available" in result
 
-    def test_format_section_long_title_truncated(self):
+    def test_format_section_long_title_truncated(self) -> None:
         from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
@@ -91,7 +91,7 @@ class TestReportGeneratorFormat:
         result = gen._format_section("Section", articles)
         assert "..." in result  # Title should be truncated
 
-    def test_format_section_missing_keys_handled(self):
+    def test_format_section_missing_keys_handled(self) -> None:
         from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
@@ -103,7 +103,7 @@ class TestReportGeneratorFormat:
 class TestSchedulerService:
     """Tests for the scheduler service initialization."""
 
-    def test_scheduler_init(self):
+    def test_scheduler_init(self) -> None:
         from services.scheduler import SchedulerService
 
         callback = lambda: None
@@ -111,7 +111,7 @@ class TestSchedulerService:
         assert svc.refresh_callback is callback
         assert svc.daily_report_callback is None
 
-    def test_scheduler_init_with_report_callback(self):
+    def test_scheduler_init_with_report_callback(self) -> None:
         from services.scheduler import SchedulerService
 
         refresh_cb = lambda: None
@@ -123,7 +123,7 @@ class TestSchedulerService:
 class TestSummarizer:
     """Tests for the summarizer fallback behavior."""
 
-    def test_simple_summary_returns_string(self):
+    def test_simple_summary_returns_string(self) -> None:
         from services.summarizer import Summarizer
 
         summarizer = Summarizer.__new__(Summarizer)
@@ -136,7 +136,7 @@ class TestSummarizer:
         assert "Article 1" in result
         assert "Article 2" in result
 
-    def test_simple_summary_empty_articles(self):
+    def test_simple_summary_empty_articles(self) -> None:
         from services.summarizer import Summarizer
 
         summarizer = Summarizer.__new__(Summarizer)
@@ -144,7 +144,7 @@ class TestSummarizer:
         assert isinstance(result, str)
         assert "No articles" in result or "Today's Top" in result
 
-    def test_simple_summary_truncates_at_10(self):
+    def test_simple_summary_truncates_at_10(self) -> None:
         from services.summarizer import Summarizer
 
         summarizer = Summarizer.__new__(Summarizer)
@@ -158,7 +158,7 @@ class TestSummarizer:
 class TestConfig:
     """Tests for the configuration module."""
 
-    def test_config_has_required_attributes(self):
+    def test_config_has_required_attributes(self) -> None:
         from config.config import Config
 
         config = Config()
@@ -168,7 +168,7 @@ class TestConfig:
         assert hasattr(config, "REQUEST_TIMEOUT")
         assert hasattr(config, "MAX_RETRIES")
 
-    def test_config_has_all_feed_categories(self):
+    def test_config_has_all_feed_categories(self) -> None:
         from config.config import Config
 
         config = Config()
@@ -179,13 +179,13 @@ class TestConfig:
         for cat in expected:
             assert cat in config.RSS_FEEDS, f"Missing feed category: {cat}"
 
-    def test_config_articles_per_section_positive(self):
+    def test_config_articles_per_section_positive(self) -> None:
         from config.config import Config
 
         config = Config()
         assert config.ARTICLES_PER_SECTION > 0
 
-    def test_config_timeout_positive(self):
+    def test_config_timeout_positive(self) -> None:
         from config.config import Config
 
         config = Config()

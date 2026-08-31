@@ -10,7 +10,7 @@ import asyncio
 from services.report_generator import ReportGenerator
 
 
-async def test_all_categories():
+async def test_all_categories() -> None:
     generator = ReportGenerator()
     categories = [
         "tools",

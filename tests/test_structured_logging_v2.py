@@ -9,7 +9,7 @@ from utils.structured_logging import JSONFormatter
 class TestJSONFormatter:
     """Tests for JSONFormatter."""
 
-    def test_formats_log_record(self):
+    def test_formats_log_record(self) -> None:
         fmt = JSONFormatter()
         record = logging.LogRecord(
             name="test", level=logging.INFO, pathname="test.py",
@@ -20,7 +20,7 @@ class TestJSONFormatter:
         assert parsed["message"] == "test message"
         assert parsed["level"] == "INFO"
 
-    def test_includes_exception_info(self):
+    def test_includes_exception_info(self) -> None:
         fmt = JSONFormatter()
         try:
             raise ValueError("test error")

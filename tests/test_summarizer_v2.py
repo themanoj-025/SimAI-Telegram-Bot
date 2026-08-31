@@ -7,7 +7,7 @@ from services.summarizer import Summarizer
 class TestSummarizer:
     """Tests for Summarizer."""
 
-    def test_simple_summary_no_model(self):
+    def test_simple_summary_no_model(self) -> None:
         summarizer = Summarizer()
         # Force no model
         summarizer.model = None
@@ -19,13 +19,13 @@ class TestSummarizer:
         assert "AI Breakthrough" in result
         assert "New Model Released" in result
 
-    def test_simple_summary_empty_articles(self):
+    def test_simple_summary_empty_articles(self) -> None:
         summarizer = Summarizer()
         summarizer.model = None
         result = summarizer.get_simple_summary([])
         assert "Top AI Stories" in result
 
-    def test_summarize_no_articles(self):
+    def test_summarize_no_articles(self) -> None:
         summarizer = Summarizer()
         summarizer.model = None
         import asyncio

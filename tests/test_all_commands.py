@@ -14,7 +14,7 @@ from telegram.ext import ContextTypes
 import run_bot
 
 
-def make_update(message_text: str = "/test"):
+def make_update(message_text: str = "/test") -> None:
     update = MagicMock(spec=Update)
     update.message = AsyncMock(spec=Message)
     update.message.text = message_text
@@ -22,7 +22,7 @@ def make_update(message_text: str = "/test"):
     return update
 
 
-async def test_basic_commands():
+async def test_basic_commands() -> None:
     context = MagicMock(spec=ContextTypes.DEFAULT_TYPE)
     context.args = []
 
@@ -35,7 +35,7 @@ async def test_basic_commands():
     assert help_update.message.reply_text.await_count == 1
 
 
-async def test_report_commands():
+async def test_report_commands() -> None:
     categories = [
         ("daily", "all"),
         ("tools", "tools"),
@@ -71,7 +71,7 @@ async def test_report_commands():
             assert mock_send.await_count == len(categories)
 
 
-async def test_summary_command():
+async def test_summary_command() -> None:
     context = MagicMock(spec=ContextTypes.DEFAULT_TYPE)
     context.args = []
     update = make_update("/summary")
@@ -92,7 +92,7 @@ async def test_summary_command():
                 assert mock_send.await_count == 1
 
 
-async def test_ai_feature_commands():
+async def test_ai_feature_commands() -> None:
     with patch.object(run_bot, "send_split_message", new=AsyncMock()) as mock_send:
         compare_context = MagicMock(spec=ContextTypes.DEFAULT_TYPE)
         compare_context.args = ["GPT-4o", "vs", "Claude"]
@@ -127,7 +127,7 @@ async def test_ai_feature_commands():
         assert mock_send.await_count == 3
 
 
-async def test_compare_usage_prompt():
+async def test_compare_usage_prompt() -> None:
     context = MagicMock(spec=ContextTypes.DEFAULT_TYPE)
     context.args = []
     update = make_update("/compare")
@@ -135,7 +135,7 @@ async def test_compare_usage_prompt():
     assert update.message.reply_text.await_count == 1
 
 
-async def main():
+async def main() -> None:
     await test_basic_commands()
     await test_report_commands()
     await test_summary_command()
