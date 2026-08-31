@@ -15,7 +15,7 @@ from config.config import Config
 from run_bot import start_command
 
 
-async def test_bot_startup():
+async def test_bot_startup() -> None:
     print("Testing Bot Startup Logic...")
 
     # 1. Verify Config doesn't have removed categories

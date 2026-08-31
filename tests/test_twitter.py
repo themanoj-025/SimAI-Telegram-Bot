@@ -10,7 +10,7 @@ import asyncio
 from scrapers.twitter_scraper import TwitterScraper
 
 
-async def test_twitter_scraper():
+async def test_twitter_scraper() -> None:
     print("Testing TwitterScraper...")
     scraper = TwitterScraper()
     tweets = await scraper.fetch_tweets(limit=5)

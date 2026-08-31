@@ -8,7 +8,7 @@ from utils.telegram_utils import send_split_message
 
 
 @pytest.fixture
-def mock_update():
+def mock_update() -> None:
     update = MagicMock()
     update.message = AsyncMock()
     update.message.reply_text = AsyncMock()
@@ -17,7 +17,7 @@ def mock_update():
 
 class TestSendSplitMessage:
     @pytest.mark.asyncio
-    async def test_short_message_sends_directly(self, mock_update):
+    async def test_short_message_sends_directly(self, mock_update) -> None:
         text = "Hello, this is a short message."
         await send_split_message(mock_update, text)
         mock_update.message.reply_text.assert_awaited_once_with(
@@ -25,17 +25,17 @@ class TestSendSplitMessage:
         )
 
     @pytest.mark.asyncio
-    async def test_empty_text_does_nothing(self, mock_update):
+    async def test_empty_text_does_nothing(self, mock_update) -> None:
         await send_split_message(mock_update, "")
         mock_update.message.reply_text.assert_not_awaited()
 
     @pytest.mark.asyncio
-    async def test_none_text_does_nothing(self, mock_update):
+    async def test_none_text_does_nothing(self, mock_update) -> None:
         await send_split_message(mock_update, None)
         mock_update.message.reply_text.assert_not_awaited()
 
     @pytest.mark.asyncio
-    async def test_long_message_splits(self, mock_update):
+    async def test_long_message_splits(self, mock_update) -> None:
         # Create a message that's over 4000 chars
         sections = ["Section A\n\n" + "x" * 2000, "Section B\n\n" + "y" * 2000]
         text = "\n\n".join(sections)
@@ -46,14 +46,14 @@ class TestSendSplitMessage:
         assert mock_update.message.reply_text.await_count >= 2
 
     @pytest.mark.asyncio
-    async def test_very_long_single_section(self, mock_update):
+    async def test_very_long_single_section(self, mock_update) -> None:
         # A single section > 4000 chars gets split by lines
         text = "A" * 5000
         await send_split_message(mock_update, text)
         assert mock_update.message.reply_text.await_count >= 2
 
     @pytest.mark.asyncio
-    async def test_custom_parse_mode(self, mock_update):
+    async def test_custom_parse_mode(self, mock_update) -> None:
         text = "Hello"
         await send_split_message(mock_update, text, parse_mode="HTML")
         mock_update.message.reply_text.assert_awaited_once_with(
@@ -61,7 +61,7 @@ class TestSendSplitMessage:
         )
 
     @pytest.mark.asyncio
-    async def test_markdown_fallback_on_error(self, mock_update):
+    async def test_markdown_fallback_on_error(self, mock_update) -> None:
         """When Markdown parsing fails, falls back to plain text."""
         import telegram.error
 
@@ -84,13 +84,13 @@ class TestSendSplitMessage:
 
 class TestSendSplitMessageEdgeCases:
     @pytest.mark.asyncio
-    async def test_single_section_exact_limit(self, mock_update):
+    async def test_single_section_exact_limit(self, mock_update) -> None:
         text = "x" * 4000
         await send_split_message(mock_update, text)
         mock_update.message.reply_text.assert_awaited_once()
 
     @pytest.mark.asyncio
-    async def test_many_newlines(self, mock_update):
+    async def test_many_newlines(self, mock_update) -> None:
         text = "\n\n".join(["Line " + str(i) for i in range(200)])
         await send_split_message(mock_update, text)
         assert mock_update.message.reply_text.await_count >= 1

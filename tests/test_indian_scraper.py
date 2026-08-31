@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from scrapers.indian_news_scraper import IndianAINewsScraper
 
 
-async def test_indian_scraper():
+async def test_indian_scraper() -> None:
     scraper = IndianAINewsScraper()
     print("Fetching Indian AI news...")
     news = await scraper.fetch_indian_ai_news(limit=10)
