@@ -79,25 +79,11 @@ jobs:
           echo "=== $errors file(s) failed ==="
           [ "$errors" -eq 0 ] || exit 1
 
-  test:
-    runs-on: ubuntu-latest
-    needs: lint
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-python@v7
-        with:
-          cache: pip
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run scraper tests
-        run: python tests/test_all_scrapers.py || echo "Scraper tests may need network — check output above"
-
-      - name: Run bot logic tests
-        run: python tests/test_bot_logic.py || echo "Bot logic tests may need network — check output above"
+      - name: Run pytest test suite
+        run: |
+          python -m pytest tests/ -v --tb=short --cov --cov-report=term-missing --cov-fail-under=50
+        env:
+          PYTHONPATH: .
 
       - name: Verify async scraper imports
         run: python scripts/verify_async_scrapers.py || echo "Async scraper verification may need network — check output above"
