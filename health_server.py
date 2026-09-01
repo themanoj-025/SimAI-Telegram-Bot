@@ -19,9 +19,16 @@ from typing import Any
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import PlainTextResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
+
+try:
+    from prometheus_client import Counter, Histogram, generate_latest
+    _PROM_AVAILABLE = True
+except ImportError:
+    _PROM_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +60,26 @@ app = FastAPI(
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Prometheus metrics
+if _PROM_AVAILABLE:
+    HEALTH_REQUEST_COUNT = Counter(
+        "health_server_requests_total",
+        "Total health server requests",
+        ["method", "endpoint", "status"],
+    )
+    HEALTH_REQUEST_LATENCY = Histogram(
+        "health_server_request_duration_seconds",
+        "Health server request latency",
+        ["method", "endpoint"],
+        buckets=[0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0],
+    )
+    BOT_MESSAGES_TOTAL = Counter(
+        "bot_messages_total", "Total bot messages processed", ["type"]
+    )
+    BOT_ERRORS_TOTAL = Counter(
+        "bot_errors_total", "Total bot errors", ["type"]
+    )
 
 # CORS: Health endpoints are called by infrastructure (k8s, Prometheus),
 # not browsers, so we only allow same-origin requests.
@@ -113,6 +140,14 @@ async def health_ready() -> dict[str, Any]:
     }
 
 
+@app.get("/metrics", tags=["info"], summary="Prometheus metrics")
+async def metrics() -> PlainTextResponse:
+    """Expose Prometheus metrics in text exposition format."""
+    if _PROM_AVAILABLE:
+        return PlainTextResponse(generate_latest(), media_type="text/plain")
+    return PlainTextResponse("# prometheus_client not installed", media_type="text/plain")
+
+
 @app.get("/", tags=["info"], summary="Service info")
 async def root() -> dict[str, Any]:
     """Service information and links."""
@@ -122,6 +157,7 @@ async def root() -> dict[str, Any]:
         "docs": "/docs",
         "health": "/health",
         "readiness": "/health/ready",
+        "metrics": "/metrics",
     }
 
 
