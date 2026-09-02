@@ -1,7 +1,9 @@
+import asyncio
+
 import pytest
 
 from services.summarizer import Summarizer
-        import asyncio
+
 pytestmark = pytest.mark.integration
 
 """Tests for summarizer service."""
