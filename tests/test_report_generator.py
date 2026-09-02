@@ -1,19 +1,7 @@
 import pytest
 
 from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
-        from services.report_generator import ReportGenerator
-        from services.report_generator import ReportGenerator
-        from services.report_generator import ReportGenerator
-        from services.report_generator import ReportGenerator
-        from services.scheduler import SchedulerService
-        from services.scheduler import SchedulerService
-        from services.summarizer import Summarizer
-        from services.summarizer import Summarizer
-        from services.summarizer import Summarizer
-        from config.config import Config
-        from config.config import Config
-        from config.config import Config
-        from config.config import Config
+
 pytestmark = pytest.mark.integration
 
 """Tests for AI-Telegram-News-Bot report generator and fallback data."""

@@ -3,13 +3,12 @@
 import pytest
 
 from scrapers.ai_features_scraper import (
-
-pytestmark = pytest.mark.integration
-
     AICompareScraper,
     AILeaderboardScraper,
     AIRoadmapScraper,
 )
+
+pytestmark = pytest.mark.integration
 
 
 class TestAICompareScraper:
