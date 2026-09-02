@@ -6,6 +6,9 @@ import pytest
 
 from utils.telegram_utils import send_split_message
 
+pytestmark = pytest.mark.integration
+
+
 
 @pytest.fixture
 def mock_update() -> None:

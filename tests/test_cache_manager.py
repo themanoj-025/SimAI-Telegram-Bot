@@ -9,6 +9,9 @@ import pytest
 
 from utils.cache_manager import CacheManager
 
+pytestmark = pytest.mark.integration
+
+
 
 @pytest.fixture
 def cache(tmp_path) -> None:

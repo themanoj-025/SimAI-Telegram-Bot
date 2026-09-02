@@ -30,6 +30,11 @@ profile = "black"
 line_length = 100
 
 [tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests requiring external services",
+    "unit: marks pure unit tests",
+]
 addopts = "--cov --cov-fail-under=50"
 minversion = "7.0"
 testpaths = ["tests"]
