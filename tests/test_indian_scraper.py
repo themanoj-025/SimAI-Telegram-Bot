@@ -4,6 +4,8 @@ import sys
 
 import pytest
 
+from scrapers.indian_news_scraper import IndianAINewsScraper
+
 pytestmark = pytest.mark.integration
 
 
@@ -11,7 +13,6 @@ pytestmark = pytest.mark.integration
 # is invoked from (repo root or a subdirectory such as tests/).
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from scrapers.indian_news_scraper import IndianAINewsScraper
 
 
 async def test_indian_scraper() -> None:

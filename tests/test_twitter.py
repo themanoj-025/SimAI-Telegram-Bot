@@ -1,7 +1,10 @@
+import asyncio
 import os
 import sys
 
 import pytest
+
+from scrapers.twitter_scraper import TwitterScraper
 
 pytestmark = pytest.mark.integration
 
@@ -10,9 +13,7 @@ pytestmark = pytest.mark.integration
 # is invoked from (repo root or a subdirectory such as tests/).
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import asyncio
 
-from scrapers.twitter_scraper import TwitterScraper
 
 
 async def test_twitter_scraper() -> None:

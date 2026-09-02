@@ -1,11 +1,12 @@
 import pytest
 
+from services.report_generator import ReportGenerator
+
 pytestmark = pytest.mark.integration
 
 """Tests for report generator service."""
 
 
-from services.report_generator import ReportGenerator
 
 
 class TestReportGenerator:

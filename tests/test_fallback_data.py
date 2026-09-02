@@ -1,11 +1,12 @@
 import pytest
 
+from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
+
 pytestmark = pytest.mark.integration
 
 """Tests for fallback_data — static fallback content provider."""
 
 
-from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
 
 
 class TestGetFallbackArticles:
