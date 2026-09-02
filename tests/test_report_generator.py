@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.integration
+
 """Tests for AI-Telegram-News-Bot report generator and fallback data."""
 
 

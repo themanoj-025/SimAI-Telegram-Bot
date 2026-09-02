@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """Tests for logger — setup_logger and _ensure_utf8_console."""
 
 import logging
