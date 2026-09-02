@@ -1,10 +1,11 @@
-import pytest
-
 import logging
 from pathlib import Path
 from unittest.mock import patch
+
+import pytest
+
 from utils.logger import setup_logger
-        from utils.logger import _ensure_utf8_console
+
 pytestmark = pytest.mark.unit
 
 """Tests for logger — setup_logger and _ensure_utf8_console."""
