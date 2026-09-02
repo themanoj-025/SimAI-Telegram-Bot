@@ -1,12 +1,14 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
+
+from services.scheduler import SchedulerService
 
 pytestmark = pytest.mark.unit
 
 """Tests for SchedulerService — APScheduler wrapper."""
 
-from unittest.mock import MagicMock, patch
 
-from services.scheduler import SchedulerService
 
 
 class TestSchedulerService:
