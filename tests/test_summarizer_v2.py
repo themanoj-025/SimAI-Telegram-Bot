@@ -1,11 +1,12 @@
 import pytest
 
+from services.summarizer import Summarizer
+        import asyncio
 pytestmark = pytest.mark.integration
 
 """Tests for summarizer service."""
 
 
-from services.summarizer import Summarizer
 
 
 class TestSummarizer:
@@ -32,6 +33,5 @@ class TestSummarizer:
     def test_summarize_no_articles(self) -> None:
         summarizer = Summarizer()
         summarizer.model = None
-        import asyncio
         result = asyncio.run(summarizer.summarize_articles([]))
         assert "No articles" in result

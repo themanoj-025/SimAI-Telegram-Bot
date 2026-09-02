@@ -1,7 +1,14 @@
+import asyncio
 import os
 import sys
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from telegram import Message, Update
+from telegram.ext import ContextTypes
+
+from config.config import Config
+from run_bot import start_command
 
 pytestmark = pytest.mark.integration
 
@@ -10,14 +17,8 @@ pytestmark = pytest.mark.integration
 # is invoked from (repo root or a subdirectory such as tests/).
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock
 
-from telegram import Message, Update
-from telegram.ext import ContextTypes
 
-from config.config import Config
-from run_bot import start_command
 
 
 async def test_bot_startup() -> None:

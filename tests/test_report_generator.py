@@ -1,11 +1,24 @@
 import pytest
 
+from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
+        from services.report_generator import ReportGenerator
+        from services.report_generator import ReportGenerator
+        from services.report_generator import ReportGenerator
+        from services.report_generator import ReportGenerator
+        from services.scheduler import SchedulerService
+        from services.scheduler import SchedulerService
+        from services.summarizer import Summarizer
+        from services.summarizer import Summarizer
+        from services.summarizer import Summarizer
+        from config.config import Config
+        from config.config import Config
+        from config.config import Config
+        from config.config import Config
 pytestmark = pytest.mark.integration
 
 """Tests for AI-Telegram-News-Bot report generator and fallback data."""
 
 
-from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
 
 
 class TestFallbackData:
@@ -65,7 +78,6 @@ class TestReportGeneratorFormat:
     """Tests for ReportGenerator._format_section."""
 
     def test_format_section_with_articles(self) -> None:
-        from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
         articles = [
@@ -79,7 +91,6 @@ class TestReportGeneratorFormat:
         assert "https://example.com" in result
 
     def test_format_section_empty_articles(self) -> None:
-        from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
         result = gen._format_section("Empty Section", [])
@@ -87,7 +98,6 @@ class TestReportGeneratorFormat:
         assert "No updates available" in result
 
     def test_format_section_long_title_truncated(self) -> None:
-        from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
         long_title = "A" * 200
@@ -96,7 +106,6 @@ class TestReportGeneratorFormat:
         assert "..." in result  # Title should be truncated
 
     def test_format_section_missing_keys_handled(self) -> None:
-        from services.report_generator import ReportGenerator
 
         gen = ReportGenerator.__new__(ReportGenerator)
         articles = [{"title": "Only Title"}]  # Missing link and source
@@ -108,7 +117,6 @@ class TestSchedulerService:
     """Tests for the scheduler service initialization."""
 
     def test_scheduler_init(self) -> None:
-        from services.scheduler import SchedulerService
 
         callback = lambda: None
         svc = SchedulerService(callback)
@@ -116,7 +124,6 @@ class TestSchedulerService:
         assert svc.daily_report_callback is None
 
     def test_scheduler_init_with_report_callback(self) -> None:
-        from services.scheduler import SchedulerService
 
         refresh_cb = lambda: None
         report_cb = lambda: None
@@ -128,7 +135,6 @@ class TestSummarizer:
     """Tests for the summarizer fallback behavior."""
 
     def test_simple_summary_returns_string(self) -> None:
-        from services.summarizer import Summarizer
 
         summarizer = Summarizer.__new__(Summarizer)
         articles = [
@@ -141,7 +147,6 @@ class TestSummarizer:
         assert "Article 2" in result
 
     def test_simple_summary_empty_articles(self) -> None:
-        from services.summarizer import Summarizer
 
         summarizer = Summarizer.__new__(Summarizer)
         result = summarizer.get_simple_summary([])
@@ -149,7 +154,6 @@ class TestSummarizer:
         assert "No articles" in result or "Today's Top" in result
 
     def test_simple_summary_truncates_at_10(self) -> None:
-        from services.summarizer import Summarizer
 
         summarizer = Summarizer.__new__(Summarizer)
         articles = [{"title": f"Article {i}", "link": ""} for i in range(20)]
@@ -163,7 +167,6 @@ class TestConfig:
     """Tests for the configuration module."""
 
     def test_config_has_required_attributes(self) -> None:
-        from config.config import Config
 
         config = Config()
         assert hasattr(config, "ARTICLES_PER_SECTION")
@@ -173,7 +176,6 @@ class TestConfig:
         assert hasattr(config, "MAX_RETRIES")
 
     def test_config_has_all_feed_categories(self) -> None:
-        from config.config import Config
 
         config = Config()
         expected = [
@@ -184,13 +186,11 @@ class TestConfig:
             assert cat in config.RSS_FEEDS, f"Missing feed category: {cat}"
 
     def test_config_articles_per_section_positive(self) -> None:
-        from config.config import Config
 
         config = Config()
         assert config.ARTICLES_PER_SECTION > 0
 
     def test_config_timeout_positive(self) -> None:
-        from config.config import Config
 
         config = Config()
         assert config.REQUEST_TIMEOUT > 0
