@@ -1,3 +1,7 @@
+import pytest
+
+pytestmark = pytest.mark.unit
+
 """Tests for scheduler service."""
 
 from unittest.mock import MagicMock, patch

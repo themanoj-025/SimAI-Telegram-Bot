@@ -1,5 +1,9 @@
+import pytest
 import os
 import sys
+
+pytestmark = pytest.mark.integration
+
 
 # Ensure the repository root is importable regardless of where this script
 # is invoked from (repo root or a subdirectory such as tests/).
