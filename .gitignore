@@ -89,3 +89,9 @@ yarn-error.log*
 .cursorrules
 
 CLAUDE.md
+
+# Test coverage artifacts
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
