@@ -2,7 +2,7 @@
 
 ## Where to get help
 
-- **🐛 Bug reports & feature requests** — Open an issue on [GitHub Issues](https://github.com/themanoj-025/ai_daily_telegram_bot/issues)
+- **🐛 Bug reports & feature requests** — Open an issue on [GitHub Issues](https://github.com/themanoj-025/SimAI-Telegram-Bot/issues)
 - **🔒 Security vulnerabilities** — See [SECURITY.md](SECURITY.md) for responsible disclosure
 - **📧 Email** — manojjana.0025@gmail.com (for private/urgent matters)
 
