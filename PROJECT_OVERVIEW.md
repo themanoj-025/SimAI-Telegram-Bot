@@ -4,7 +4,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Telegram Bot](https://img.shields.io/badge/Telegram-Bot-2CA5E0)](https://core.telegram.org/bots)
-[![CI](https://img.shields.io/badge/CI-passing-brightgreen)](https://github.com/themanoj-025/ai_daily_telegram_bot/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/badge/CI-passing-brightgreen)](https://github.com/themanoj-025/SimAI-Telegram-Bot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ---
@@ -554,7 +554,7 @@ The bot also handles free-text messages via keyword matching:
 
 ```bash
 # 1. Clone and setup
-git clone https://github.com/themanoj-025/ai_daily_telegram_bot.git
+git clone https://github.com/themanoj-025/SimAI-Telegram-Bot.git
 cd ai_daily_telegram_bot
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\Activate
