@@ -1,10 +1,4 @@
 import asyncio
-import os
-import sys
-
-# Ensure the repository root is importable regardless of where this script
-# is invoked from (repo root or a subdirectory such as scripts/).
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from scrapers.github_scraper import GitHubScraper
 from scrapers.news_scraper import NewsScraper, YouTubeScraper

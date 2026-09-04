@@ -1,19 +1,10 @@
 import asyncio
-import os
-import sys
 
 import pytest
 
 from scrapers.twitter_scraper import TwitterScraper
 
 pytestmark = pytest.mark.integration
-
-
-# Ensure the repository root is importable regardless of where this script
-# is invoked from (repo root or a subdirectory such as tests/).
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
 
 
 async def test_twitter_scraper() -> None:
