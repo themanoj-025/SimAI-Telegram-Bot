@@ -1,10 +1,3 @@
-import os
-import sys
-
-# Ensure the repository root is importable regardless of where this script
-# is invoked from (repo root or a subdirectory such as scripts/).
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import asyncio
 
 from services.summarizer import Summarizer
