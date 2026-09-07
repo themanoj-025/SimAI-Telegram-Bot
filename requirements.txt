@@ -9,7 +9,7 @@ apscheduler>=3.11.3
 google-generativeai>=0.8.6
 
 # API observability
-prometheus-client>=0.21.0
+prometheus-client>=0.26.0
 
 # Testing
 pytest>=8.0.0
