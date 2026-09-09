@@ -34,4 +34,5 @@ class TestJSONFormatter:
         output = fmt.format(record)
         parsed = json.loads(output)
         assert "exception" in parsed
-        assert "ValueError" in parsed["exception"]
+        assert parsed["exception"]["type"] == "ValueError"
+        assert "test error" in parsed["exception"]["value"]

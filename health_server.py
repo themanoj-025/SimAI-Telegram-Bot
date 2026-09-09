@@ -19,7 +19,7 @@ from typing import Any
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.util import get_remote_address
@@ -149,12 +149,15 @@ async def health_ready() -> dict[str, Any]:
     """
     ready = _readiness["bot_connected"]
     status_code = 200 if ready else 503
-    return {
+    body = {
         "status": "ready" if ready else "not_ready",
         "bot_connected": _readiness["bot_connected"],
         "scheduler_running": _readiness["scheduler_running"],
         "uptime_seconds": round(time.time() - _readiness["started_at"], 1),
     }
+    # Return the computed status so orchestration readiness probes (k8s,
+    # Docker healthcheck) actually see 503 before the bot is initialized.
+    return JSONResponse(status_code=status_code, content=body)
 
 
 @app.get("/metrics", tags=["info"], summary="Prometheus metrics")

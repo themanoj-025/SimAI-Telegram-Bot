@@ -1,6 +1,7 @@
 import json
 import os
 import sqlite3
+from contextlib import closing
 from datetime import datetime, timedelta
 
 from utils.logger import setup_logger
@@ -17,7 +18,7 @@ class CacheManager:
 
     def _init_db(self) -> None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     """
@@ -44,7 +45,7 @@ class CacheManager:
 
     def get_cached_data(self, category, max_age_hours=6) -> None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     "SELECT data, last_updated FROM cache WHERE category = ?",
@@ -64,7 +65,7 @@ class CacheManager:
 
     def get_latest_cached_data(self, category) -> None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     "SELECT data FROM cache WHERE category = ? ORDER BY last_updated DESC LIMIT 1",
@@ -78,7 +79,7 @@ class CacheManager:
 
     def update_cache(self, category, data) -> None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM cache WHERE category = ?", (category,))
                 cursor.execute(
@@ -91,7 +92,7 @@ class CacheManager:
 
     def is_duplicate(self, category, item_id) -> None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     "SELECT 1 FROM seen_items WHERE category = ? AND item_id = ?",
@@ -104,7 +105,7 @@ class CacheManager:
 
     def mark_as_seen(self, category, item_id) -> None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
                 cursor.execute(
                     "INSERT OR IGNORE INTO seen_items (category, item_id, first_seen) VALUES (?, ?, ?)",
@@ -117,7 +118,7 @@ class CacheManager:
     def clear_old_seen_items(self, days=30) -> None:
         try:
             cutoff = (datetime.now() - timedelta(days=days)).isoformat()
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
                 cursor.execute("DELETE FROM seen_items WHERE first_seen < ?", (cutoff,))
                 conn.commit()

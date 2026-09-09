@@ -1,6 +1,10 @@
 import pytest
 
+from config.config import Config
 from scrapers.fallback_data import FALLBACK_CONTENT, get_fallback_articles
+from services.report_generator import ReportGenerator
+from services.scheduler import SchedulerService
+from services.summarizer import Summarizer
 
 pytestmark = pytest.mark.integration
 
