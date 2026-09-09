@@ -15,7 +15,9 @@ try:
         "_request_id", default=""
     )
 except ImportError:
-    _request_id_var = cast(Any, None)
+    # contextvars ships with Python 3.7+; this fallback only exists for
+    # exotic builds — type as Any since the ContextVar generic isn't available.
+    _request_id_var: Any = None
 
 
 def set_request_id(request_id: str) -> None:
@@ -69,7 +71,7 @@ class ReadableFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         rid = get_request_id()
         prefix = f"[{rid}] " if rid else ""
-        return f"{prefix}{recordasctime} - {record.name} - {record.levelname} - {record.getMessage()}"
+        return f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
 
 
 def _ensure_utf8_console() -> None:
