@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from utils.logger import setup_logger
+from utils.logger import _ensure_utf8_console, setup_logger
 
 pytestmark = pytest.mark.unit
 

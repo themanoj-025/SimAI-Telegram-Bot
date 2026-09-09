@@ -7,8 +7,6 @@ pytestmark = pytest.mark.integration
 """Tests for report generator service."""
 
 
-
-
 class TestReportGenerator:
     """Tests for ReportGenerator."""
 
@@ -16,17 +14,18 @@ class TestReportGenerator:
         gen = ReportGenerator()
         assert gen is not None
 
-    def test_generate_daily_summary(self) -> None:
+    def test_format_section_with_articles(self) -> None:
         gen = ReportGenerator()
         articles = [
             {"title": "AI Breakthrough", "source": "TechCrunch", "link": "http://example.com"},
             {"title": "New Model", "source": "MIT News", "link": "http://example.com/2"},
         ]
-        result = gen.generate_daily_summary(articles)
+        result = gen._format_section("News", articles)
         assert result is not None
         assert "AI Breakthrough" in result
 
-    def test_empty_articles(self) -> None:
+    def test_format_section_empty_articles(self) -> None:
         gen = ReportGenerator()
-        result = gen.generate_daily_summary([])
+        result = gen._format_section("News", [])
         assert result is not None
+        assert "No updates available" in result

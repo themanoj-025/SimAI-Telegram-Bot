@@ -29,7 +29,6 @@ ignore = [
     "SIM105",  # suppressible-exception
     "F841",    # unused variable
     "B905",    # zip-without-strict
-    "F821",    # undefined name — pre-existing missing imports
     "B007",    # unused loop variable
 ]
 
