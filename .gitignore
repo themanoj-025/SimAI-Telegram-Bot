@@ -95,3 +95,8 @@ CLAUDE.md
 .coverage.*
 htmlcov/
 coverage.xml
+
+# ── Portfolio-standard ignores (sweep 2026-09) ──────────────
+radar_balance.txt
+*.db-shm
+*.db-wal
