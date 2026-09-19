@@ -116,17 +116,13 @@ class TwitterScraper(AsyncBaseScraper):
                     continue
             return []
 
-        results = await asyncio.gather(
-            *[fetch_account_tweets(account) for account in sampled_accounts]
-        )
+        results = await asyncio.gather(*[fetch_account_tweets(account) for account in sampled_accounts])
         for result in results:
             all_tweets.extend(result)
 
         all_tweets = [tweet for tweet in all_tweets if tweet.get("title", "").strip()]
         if len(all_tweets) < 3:
-            logger.warning(
-                "Live tweet fetch yielded insufficient results. Using curated static fallback."
-            )
+            logger.warning("Live tweet fetch yielded insufficient results. Using curated static fallback.")
             all_tweets = STATIC_AI_TWEETS.copy()
 
         random.shuffle(all_tweets)

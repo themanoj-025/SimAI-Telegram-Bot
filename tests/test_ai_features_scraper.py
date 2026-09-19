@@ -103,9 +103,7 @@ class TestAILeaderboardScraper:
         result = await self.scraper.get_leaderboard()
         # Should mention some well-known models
         result_lower = result.lower()
-        assert any(
-            name in result_lower for name in ["gpt", "claude", "gemini", "llama", "deepseek"]
-        )
+        assert any(name in result_lower for name in ["gpt", "claude", "gemini", "llama", "deepseek"])
 
     @pytest.mark.asyncio
     async def test_leaderboard_with_filter(self) -> None:

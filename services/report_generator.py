@@ -154,20 +154,10 @@ class ReportGenerator:
 
         for index, article in enumerate(articles, 1):
             title_text = (
-                article.get("title", "No Title")
-                if isinstance(article, dict)
-                else getattr(article, "title", "No Title")
+                article.get("title", "No Title") if isinstance(article, dict) else getattr(article, "title", "No Title")
             )
-            link = (
-                article.get("link", "")
-                if isinstance(article, dict)
-                else getattr(article, "link", "")
-            )
-            source = (
-                article.get("source", "")
-                if isinstance(article, dict)
-                else getattr(article, "source", "")
-            )
+            link = article.get("link", "") if isinstance(article, dict) else getattr(article, "link", "")
+            source = article.get("source", "") if isinstance(article, dict) else getattr(article, "source", "")
 
             safe_title = title_text[:150] + "..." if len(title_text) > 150 else title_text
             section += f"{index}. {safe_title}\n"
