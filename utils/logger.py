@@ -11,9 +11,7 @@ from config.config import Config
 try:
     import contextvars
 
-    _request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar(
-        "_request_id", default=""
-    )
+    _request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("_request_id", default="")
 except ImportError:
     # contextvars ships with Python 3.7+; this fallback only exists for
     # exotic builds — type as Any since the ContextVar generic isn't available.
@@ -71,7 +69,9 @@ class ReadableFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         rid = get_request_id()
         prefix = f"[{rid}] " if rid else ""
-        return f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
+        return (
+            f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
+        )
 
 
 def _ensure_utf8_console() -> None:
@@ -95,10 +95,12 @@ def setup_logger(name: str = "ai_daily_bot") -> logging.Logger:
 
     # Console handler — human-readable
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(ReadableFormatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    ))
+    console_handler.setFormatter(
+        ReadableFormatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+    )
     logger.addHandler(console_handler)
 
     # File handler — structured JSON

@@ -12,7 +12,6 @@ from utils.cache_manager import CacheManager
 pytestmark = pytest.mark.integration
 
 
-
 @pytest.fixture
 def cache(tmp_path) -> None:
     """Create a CacheManager with a temporary SQLite database."""
@@ -30,9 +29,7 @@ class TestCacheManagerInit:
         """Verify both cache and seen_items tables exist."""
         with sqlite3.connect(cache.db_path) as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                "SELECT name FROM sqlite_master WHERE type='table'"
-            )
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
             tables = {row[0] for row in cursor.fetchall()}
             assert "cache" in tables
             assert "seen_items" in tables

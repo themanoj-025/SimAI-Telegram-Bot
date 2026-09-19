@@ -9,8 +9,6 @@ pytestmark = pytest.mark.unit
 """Tests for SchedulerService — APScheduler wrapper."""
 
 
-
-
 class TestSchedulerService:
     def setup_method(self) -> None:
         self.refresh_cb = MagicMock()

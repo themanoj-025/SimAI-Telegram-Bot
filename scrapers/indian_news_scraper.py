@@ -25,9 +25,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
 
     async def fetch_url_with_headers(self, url: str) -> str | None:
         """Fetch URL with browser-like headers to avoid 403s."""
-        async with httpx.AsyncClient(
-            headers=self.browser_headers, follow_redirects=True
-        ) as client:
+        async with httpx.AsyncClient(headers=self.browser_headers, follow_redirects=True) as client:
             try:
                 response = await client.get(url, timeout=15)
                 logger.info(f"Fetched {url} - Status: {response.status_code}")
