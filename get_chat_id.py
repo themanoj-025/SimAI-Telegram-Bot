@@ -24,9 +24,7 @@ def get_chat_id() -> None:
                 for update in updates[-5:]:
                     if "message" in update:
                         chat = update["message"]["chat"]
-                        print(
-                            f"Chat ID: {chat['id']} | Type: {chat['type']} | Name: {chat.get('first_name', 'N/A')}"
-                        )
+                        print(f"Chat ID: {chat['id']} | Type: {chat['type']} | Name: {chat.get('first_name', 'N/A')}")
             else:
                 print("No messages found. Make sure you've sent a message to the bot first!")
         else:

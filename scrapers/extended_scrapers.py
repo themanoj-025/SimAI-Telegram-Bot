@@ -14,9 +14,7 @@ class ExtendedScraper(AsyncBaseScraper):
         super().__init__()
         self.cache = CacheManager()
 
-    async def fetch_category(
-        self, category: str, limit: int = 5, force_refresh: bool = False
-    ) -> list[dict]:
+    async def fetch_category(self, category: str, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         """Fetch data for a specific category, using cache if fresh unless force_refresh is True."""
         if not force_refresh:
             cached_data = self.cache.get_cached_data(category)

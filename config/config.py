@@ -189,6 +189,4 @@ class Config:
 
     LOG_LEVEL = "INFO"
     LOG_FILE = "ai_daily_bot.log"
-    REPORT_TIME = datetime.now().replace(
-        hour=9, minute=0, second=0, microsecond=0
-    )  # Default report time
+    REPORT_TIME = datetime.now().replace(hour=9, minute=0, second=0, microsecond=0)  # Default report time

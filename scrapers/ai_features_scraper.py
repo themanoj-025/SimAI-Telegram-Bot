@@ -510,9 +510,7 @@ class AILeaderboardScraper:
             if filtered:
                 data = filtered
             else:
-                logger.info(
-                    f"No leaderboard matches for filter '{filter_input}', returning the full curated list."
-                )
+                logger.info(f"No leaderboard matches for filter '{filter_input}', returning the full curated list.")
 
         lines = [
             "*AI Model Leaderboard*",

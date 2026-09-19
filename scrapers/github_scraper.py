@@ -24,9 +24,7 @@ class GitHubScraper(AsyncBaseScraper):
     def _parse_trending_html(self, html: str, limit: int) -> list[dict]:
         articles = []
         soup = BeautifulSoup(html, "html.parser")
-        repositories = soup.select(
-            "article.Box-row, article.box-row, article.Box, article.box-border"
-        )
+        repositories = soup.select("article.Box-row, article.box-row, article.Box, article.box-border")
 
         for repo in repositories:
             try:
@@ -38,11 +36,7 @@ class GitHubScraper(AsyncBaseScraper):
                 title = " ".join(title_elem.get_text(" ", strip=True).split())
 
                 description_elem = repo.select_one("p")
-                description = (
-                    " ".join(description_elem.get_text(" ", strip=True).split())
-                    if description_elem
-                    else ""
-                )
+                description = " ".join(description_elem.get_text(" ", strip=True).split()) if description_elem else ""
 
                 stars_elem = repo.select_one("a[href$='/stargazers']")
                 stars = stars_elem.get_text(" ", strip=True) if stars_elem else ""
