@@ -9,7 +9,6 @@ from utils.telegram_utils import send_split_message
 pytestmark = pytest.mark.integration
 
 
-
 @pytest.fixture
 def mock_update() -> None:
     update = MagicMock()
@@ -23,9 +22,7 @@ class TestSendSplitMessage:
     async def test_short_message_sends_directly(self, mock_update) -> None:
         text = "Hello, this is a short message."
         await send_split_message(mock_update, text)
-        mock_update.message.reply_text.assert_awaited_once_with(
-            text, parse_mode="Markdown"
-        )
+        mock_update.message.reply_text.assert_awaited_once_with(text, parse_mode="Markdown")
 
     @pytest.mark.asyncio
     async def test_empty_text_does_nothing(self, mock_update) -> None:
@@ -59,9 +56,7 @@ class TestSendSplitMessage:
     async def test_custom_parse_mode(self, mock_update) -> None:
         text = "Hello"
         await send_split_message(mock_update, text, parse_mode="HTML")
-        mock_update.message.reply_text.assert_awaited_once_with(
-            text, parse_mode="HTML"
-        )
+        mock_update.message.reply_text.assert_awaited_once_with(text, parse_mode="HTML")
 
     @pytest.mark.asyncio
     async def test_markdown_fallback_on_error(self, mock_update) -> None:

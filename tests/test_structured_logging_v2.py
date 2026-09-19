@@ -12,8 +12,13 @@ class TestJSONFormatter:
     def test_formats_log_record(self) -> None:
         fmt = JSONFormatter()
         record = logging.LogRecord(
-            name="test", level=logging.INFO, pathname="test.py",
-            lineno=1, msg="test message", args=(), exc_info=None,
+            name="test",
+            level=logging.INFO,
+            pathname="test.py",
+            lineno=1,
+            msg="test message",
+            args=(),
+            exc_info=None,
         )
         output = fmt.format(record)
         parsed = json.loads(output)
@@ -26,10 +31,16 @@ class TestJSONFormatter:
             raise ValueError("test error")
         except ValueError:
             import sys
+
             exc_info = sys.exc_info()
         record = logging.LogRecord(
-            name="test", level=logging.ERROR, pathname="test.py",
-            lineno=1, msg="error occurred", args=(), exc_info=exc_info,
+            name="test",
+            level=logging.ERROR,
+            pathname="test.py",
+            lineno=1,
+            msg="error occurred",
+            args=(),
+            exc_info=exc_info,
         )
         output = fmt.format(record)
         parsed = json.loads(output)

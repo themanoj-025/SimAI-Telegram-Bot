@@ -9,8 +9,6 @@ pytestmark = pytest.mark.unit
 """Tests for scheduler service."""
 
 
-
-
 class TestSchedulerService:
     """Tests for SchedulerService."""
 

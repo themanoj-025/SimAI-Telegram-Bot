@@ -11,8 +11,6 @@ pytestmark = pytest.mark.unit
 """Tests for logger — setup_logger and _ensure_utf8_console."""
 
 
-
-
 class TestSetupLogger:
     def test_returns_logger_instance(self) -> None:
         logger = setup_logger("test_logger_returns")

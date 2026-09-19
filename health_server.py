@@ -26,6 +26,7 @@ from slowapi.util import get_remote_address
 
 try:
     from prometheus_client import Counter, Histogram, generate_latest
+
     _PROM_AVAILABLE = True
 except ImportError:
     _PROM_AVAILABLE = False
@@ -74,12 +75,8 @@ if _PROM_AVAILABLE:
         ["method", "endpoint"],
         buckets=[0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0],
     )
-    BOT_MESSAGES_TOTAL = Counter(
-        "bot_messages_total", "Total bot messages processed", ["type"]
-    )
-    BOT_ERRORS_TOTAL = Counter(
-        "bot_errors_total", "Total bot errors", ["type"]
-    )
+    BOT_MESSAGES_TOTAL = Counter("bot_messages_total", "Total bot messages processed", ["type"])
+    BOT_ERRORS_TOTAL = Counter("bot_errors_total", "Total bot errors", ["type"])
 
 # CORS: Health endpoints are called by infrastructure (k8s, Prometheus),
 # not browsers, so we only allow same-origin requests.
@@ -105,10 +102,9 @@ async def add_security_headers(request, call_next) -> Any:
     response.headers["Permissions-Policy"] = (
         "camera=(), microphone=(), geolocation=(), interest-cohort=()"
     )
-    response.headers["Content-Security-Policy"] = (
-        "default-src 'none'; frame-ancestors 'none';"
-    )
+    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none';"
     return response
+
 
 # ---------------------------------------------------------------------------
 # Mutable readiness state (set by the bot's post_init / post_stop hooks)

@@ -11,16 +11,22 @@ pytestmark = pytest.mark.integration
 """Tests for AI-Telegram-News-Bot report generator and fallback data."""
 
 
-
-
 class TestFallbackData:
     """Tests for the static fallback content system."""
 
     def test_fallback_has_all_categories(self) -> None:
         """Every expected category should have fallback content."""
         expected = [
-            "news", "arxiv", "blogs", "tools", "jobs",
-            "startups", "models", "trending", "learn", "indian_ai",
+            "news",
+            "arxiv",
+            "blogs",
+            "tools",
+            "jobs",
+            "startups",
+            "models",
+            "trending",
+            "learn",
+            "indian_ai",
         ]
         for cat in expected:
             assert cat in FALLBACK_CONTENT, f"Missing fallback for '{cat}'"
@@ -38,9 +44,9 @@ class TestFallbackData:
         for category, articles in FALLBACK_CONTENT.items():
             for i, article in enumerate(articles):
                 link = article["link"]
-                assert link.startswith("http"), (
-                    f"{category}[{i}] link '{link}' doesn't start with http"
-                )
+                assert link.startswith(
+                    "http"
+                ), f"{category}[{i}] link '{link}' doesn't start with http"
 
     def test_get_fallback_articles_returns_list(self) -> None:
         result = get_fallback_articles("news", 5)
@@ -171,8 +177,16 @@ class TestConfig:
 
         config = Config()
         expected = [
-            "news", "arxiv", "blogs", "tools", "jobs",
-            "startups", "models", "trending", "learn", "indian_ai",
+            "news",
+            "arxiv",
+            "blogs",
+            "tools",
+            "jobs",
+            "startups",
+            "models",
+            "trending",
+            "learn",
+            "indian_ai",
         ]
         for cat in expected:
             assert cat in config.RSS_FEEDS, f"Missing feed category: {cat}"
