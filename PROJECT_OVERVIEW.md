@@ -461,12 +461,12 @@ AI-Telegram-News-Bot/
 
 ```python
 {
-    "title": str,           # Article headline
-    "url": str,             # Source URL
-    "summary": str,         # Brief description
-    "source": str,          # Source name (e.g., "TechCrunch", "arXiv")
+    "title": str,  # Article headline
+    "url": str,  # Source URL
+    "summary": str,  # Brief description
+    "source": str,  # Source name (e.g., "TechCrunch", "arXiv")
     "published": datetime,  # Publication date
-    "category": str,        # Category (news, paper, tool, etc.)
+    "category": str,  # Category (news, paper, tool, etc.)
 }
 ```
 
@@ -474,8 +474,8 @@ AI-Telegram-News-Bot/
 
 ```python
 BotCommand(
-    command="daily",           # Command name
-    description="Full daily intelligence report"  # Help text
+    command="daily",  # Command name
+    description="Full daily intelligence report",  # Help text
 )
 ```
 

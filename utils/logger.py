@@ -69,9 +69,7 @@ class ReadableFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         rid = get_request_id()
         prefix = f"[{rid}] " if rid else ""
-        return (
-            f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
-        )
+        return f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
 
 
 def _ensure_utf8_console() -> None:
