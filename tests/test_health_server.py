@@ -59,7 +59,11 @@ class TestHealthServer:
         assert resp.status_code == 200
 
     def test_readiness_uptime_is_number(self) -> None:
-        with patch.object(health_server, "_readiness", {"bot_connected": False, "scheduler_running": False, "started_at": time.time() - 10}):
+        with patch.object(
+            health_server,
+            "_readiness",
+            {"bot_connected": False, "scheduler_running": False, "started_at": time.time() - 10},
+        ):
             client = TestClient(app)
             resp = client.get("/health/ready")
             assert resp.status_code == 503

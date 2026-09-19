@@ -7,8 +7,6 @@ pytestmark = pytest.mark.integration
 """Tests for fallback_data — static fallback content provider."""
 
 
-
-
 class TestGetFallbackArticles:
     def test_returns_known_category(self) -> None:
         articles = get_fallback_articles("news")
@@ -41,9 +39,17 @@ class TestGetFallbackArticles:
 
     def test_all_categories_have_content(self) -> None:
         expected_categories = [
-            "news", "arxiv", "blogs", "tools", "jobs",
-            "startups", "models", "trending", "learn",
-            "indian_ai", "github",
+            "news",
+            "arxiv",
+            "blogs",
+            "tools",
+            "jobs",
+            "startups",
+            "models",
+            "trending",
+            "learn",
+            "indian_ai",
+            "github",
         ]
         for cat in expected_categories:
             articles = get_fallback_articles(cat)

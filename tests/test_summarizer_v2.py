@@ -9,8 +9,6 @@ pytestmark = pytest.mark.integration
 """Tests for summarizer service."""
 
 
-
-
 class TestSummarizer:
     """Tests for Summarizer."""
 

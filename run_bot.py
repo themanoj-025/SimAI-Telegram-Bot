@@ -86,7 +86,9 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await start_command(update, context)
 
 
-async def generic_command(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str) -> None:
+async def generic_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, category: str
+) -> None:
     await update.message.reply_text("Fetching updates...")
     try:
         report = await report_generator.generate_report(category)
