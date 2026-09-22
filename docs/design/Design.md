@@ -40,7 +40,7 @@ N/A — Telegram native rendering. Use `*bold*` for section headers and item tit
 
 **Digest message anatomy (ASCII):**
 
-```
+```text
 *🤖 AI Daily Brief — 2026-08-06*
 ──────────────────────────
 *1. NEWS*

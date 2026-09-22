@@ -7,7 +7,7 @@ docs suite.
 
 ## 1. Current tree (canonical)
 
-```
+```text
 AI-Telegram-News-Bot/
 ├── run_bot.py                      # ENTRY POINT: Telegram bot + scheduler
 ├── config/
@@ -57,7 +57,7 @@ AI-Telegram-News-Bot/
 
 ## 2. Docs tree
 
-```
+```text
 docs/
 ├── architecture.md · folder_structure.md · module_dependency.md
 ├── startup_flow.md · package_overview.md

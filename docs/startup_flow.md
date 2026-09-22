@@ -2,7 +2,7 @@
 
 ## 1. Bot Boot
 
-```
+```text
 python run_bot.py              # Docker CMD / Procfile worker / Railway / Render
 │
 ├─ 1. config/config.py loads env (TELEGRAM_BOT_TOKEN, channel IDs, RSS registries)

@@ -5,7 +5,7 @@ config.
 
 ## 1. Dependency Graph
 
-```
+```text
   run_bot.py (entry — Telegram bot + 2-hour scheduler)
        │
        ├──► services/report_generator.py  ──► scrapers/* ──► utils/logger
