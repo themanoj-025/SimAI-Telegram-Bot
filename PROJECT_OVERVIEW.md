@@ -65,7 +65,7 @@
 
 ## 3. High-Level Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────────┐
 │                    Telegram Platform                                 │
 │  ┌──────────┐    ┌──────────────┐    ┌────────────────────────┐    │
@@ -134,7 +134,7 @@ The pattern is justified by: the `run_bot.py` entry point routes commands to `Re
 
 ## 4. Complete Folder Structure Tree
 
-```
+```text
 AI-Telegram-News-Bot/
 ├── .dockerignore                    # Docker build context exclusions
 ├── .editorconfig                    # Editor configuration
@@ -642,7 +642,7 @@ python tests/test_indian_scraper.py
 
 ### Internal Module Dependencies
 
-```
+```text
 run_bot.py
   ├── config/config.py
   ├── services/report_generator.py

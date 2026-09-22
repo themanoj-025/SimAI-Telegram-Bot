@@ -15,7 +15,7 @@ bot never fails silently.
 
 ## 2. Layered model
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────────┐
 │  Interface                                                           │
 │   run_bot.py — 18 command handlers + free-text keyword router +      │
@@ -64,7 +64,7 @@ scrapers → config/utils.
    `TELEGRAM_CHAT_ID`; skipped (with a warning) if the chat ID is unset.
 
 ### 3.3 Reliability tiers
-```
+```text
 Live source ──fail──▶ disk cache ──miss──▶ curated fallback_data
    (httpx/feedparser)   (6h TTL)            (always available)
 ```
