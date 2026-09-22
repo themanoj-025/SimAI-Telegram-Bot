@@ -157,7 +157,7 @@ python run_bot.py
 
 ## 🏗️ Architecture
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Telegram Platform                             │
 │  ┌──────────┐    ┌──────────────┐    ┌────────────────────────┐ │
@@ -204,7 +204,7 @@ python run_bot.py
 
 The bot never fails silently. When live sources are unavailable:
 
-```
+```text
 ┌─────────────┐     ┌─────────────┐     ┌─────────────────┐
 │ Live Source  │────▶│   Cache     │────▶│ Curated Fallback│
 │  (RSS/API)   │     │ (diskcache) │     │ (hardcoded)     │
@@ -218,7 +218,7 @@ The bot never fails silently. When live sources are unavailable:
 
 ## 📁 Project Structure
 
-```
+```text
 AI-Telegram-News-Bot/
 ├── run_bot.py                    # Entry point & command handlers
 ├── config/
