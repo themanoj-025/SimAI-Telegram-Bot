@@ -25,7 +25,7 @@
 - Naming: `snake_case`.
 - Structure:
 
-```
+```text
 run_bot.py            # entry point
 config/               # env config, feed URLs
 scrapers/             # 6 modules / 16+ sources

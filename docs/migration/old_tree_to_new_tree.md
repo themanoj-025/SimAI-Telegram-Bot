@@ -7,7 +7,7 @@ documentation suite. **No business-logic or entry-point changes.**
 
 ## Before (2026-08-10)
 
-```
+```text
 AI-Telegram-News-Bot/
 ├── run_bot.py
 ├── config/ · scrapers/ · services/ · utils/
@@ -27,7 +27,7 @@ AI-Telegram-News-Bot/
 
 ## After (2026-08-11)
 
-```
+```text
 AI-Telegram-News-Bot/
 ├── run_bot.py                     (unchanged — entry contract)
 ├── config/ · scrapers/ · services/ · utils/   (unchanged)
