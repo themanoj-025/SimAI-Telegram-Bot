@@ -10,6 +10,8 @@ google-generativeai>=0.8.6
 
 # API observability
 prometheus-client>=0.26.0
+uvicorn>=0.30.0
+slowapi>=0.1.9
 
 # Testing
 pytest>=9.1.1

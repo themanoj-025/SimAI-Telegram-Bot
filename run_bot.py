@@ -1,6 +1,8 @@
 import asyncio
 import sys
 import time
+from collections.abc import Awaitable, Callable
+from typing import Any
 
 from telegram import BotCommand, Update
 from telegram.ext import (
@@ -86,7 +88,9 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await start_command(update, context)
 
 
-async def generic_command(update: Update, context: ContextTypes.DEFAULT_TYPE, category: str) -> None:
+async def generic_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, category: str
+) -> None:
     await update.message.reply_text("Fetching updates...")
     try:
         report = await report_generator.generate_report(category)
@@ -106,7 +110,9 @@ async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         from scrapers.news_scraper import NewsScraper
 
         news = await NewsScraper().fetch_news(10)
-        articles = [article.to_dict() if hasattr(article, "to_dict") else article for article in news]
+        articles = [
+            article.to_dict() if hasattr(article, "to_dict") else article for article in news
+        ]
         summary = await summarizer.summarize_articles(articles)
         await send_split_message(update, f"*AI News Summary*\n\n{summary}")
     except (RuntimeError, ValueError, OSError) as e:
@@ -184,7 +190,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Try /daily, /compare, /roadmap, /leaderboard, or /help.")
 
 
-def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list) -> None:
+def make_broadcast_callback(
+    app: Application, chat_id: str, loop_holder: list
+) -> Callable[[], None]:
     """Create a scheduler callback that broadcasts fresh content safely from a worker thread."""
 
     def callback() -> None:
@@ -198,7 +206,9 @@ def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list) -
 
                 for chunk in chunks:
                     try:
-                        await app.bot.send_message(chat_id=chat_id, text=chunk, parse_mode="Markdown")
+                        await app.bot.send_message(
+                            chat_id=chat_id, text=chunk, parse_mode="Markdown"
+                        )
                     except (RuntimeError, OSError) as e:
                         logger.error(f"Auto-broadcast chunk send failed: {e}")
 
@@ -221,7 +231,7 @@ def main() -> None:
     if not config.TELEGRAM_BOT_TOKEN:
         raise ValueError("TELEGRAM_BOT_TOKEN is required. Set it in your environment or .env file.")
 
-    loop_holder = [None]
+    loop_holder: list[Any] = [None]
 
     async def post_init(application: Application) -> None:
         loop_holder[0] = asyncio.get_running_loop()
@@ -289,7 +299,9 @@ def main() -> None:
         "twitter",
     ]
 
-    def create_handler(category_name) -> None:
+    def create_handler(
+        category_name,
+    ) -> Callable[[Update, ContextTypes.DEFAULT_TYPE], Awaitable[None]]:
         async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await generic_command(update, context, category_name)
 
@@ -304,7 +316,9 @@ def main() -> None:
     if not chat_id:
         logger.warning("TELEGRAM_CHAT_ID not set in .env - auto-broadcast disabled.")
 
-    broadcast_callback = make_broadcast_callback(app, chat_id, loop_holder) if chat_id else lambda: None
+    broadcast_callback = (
+        make_broadcast_callback(app, chat_id, loop_holder) if chat_id else lambda: None
+    )
     scheduler = SchedulerService(refresh_callback=broadcast_callback)
     scheduler.start()
 

@@ -1,3 +1,4 @@
+import contextvars
 import json
 import logging
 import sys
@@ -7,15 +8,8 @@ from typing import Any
 
 from config.config import Config
 
-# Async-safe request ID via contextvars
-try:
-    import contextvars
-
-    _request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("_request_id", default="")
-except ImportError:
-    # contextvars ships with Python 3.7+; this fallback only exists for
-    # exotic builds — type as Any since the ContextVar generic isn't available.
-    _request_id_var: Any = None
+# Async-safe request ID via contextvars (stdlib since 3.7; the floor here is 3.11)
+_request_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("_request_id", default="")
 
 
 def set_request_id(request_id: str) -> None:
@@ -69,7 +63,9 @@ class ReadableFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         rid = get_request_id()
         prefix = f"[{rid}] " if rid else ""
-        return f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
+        return (
+            f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
+        )
 
 
 def _ensure_utf8_console() -> None:

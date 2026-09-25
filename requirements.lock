@@ -15,10 +15,18 @@ cffi==2.1.1
     # via cryptography
 charset-normalizer==3.5.1
     # via requests
+click==8.5.0
+    # via uvicorn
+colorama==0.4.6
+    # via
+    #   pytest
+    #   tqdm
 coverage==7.16.1
     # via pytest-cov
 cryptography==50.0.0
     # via google-auth
+deprecated==1.3.1
+    # via limits
 feedparser==6.0.14
     # via -r requirements.txt
 feedparser-sgmllib==2.1.0
@@ -54,9 +62,13 @@ grpcio==1.83.0
 grpcio-status==1.71.2
     # via google-api-core
 h11==0.16.0
-    # via httpcore
+    # via
+    #   httpcore
+    #   uvicorn
 httpcore==1.0.9
-    # via httpx
+    # via
+    #   httpx
+    #   python-telegram-bot
 httplib2==0.32.0
     # via
     #   google-api-python-client
@@ -72,10 +84,14 @@ idna==3.19
     #   requests
 iniconfig==2.3.0
     # via pytest
+limits==5.8.0
+    # via slowapi
 lxml==6.1.3
     # via -r requirements.txt
 packaging==26.3
-    # via pytest
+    # via
+    #   limits
+    #   pytest
 pluggy==1.6.0
     # via
     #   pytest
@@ -125,27 +141,32 @@ requests==2.34.2
     # via
     #   -r requirements.txt
     #   google-api-core
+slowapi==0.1.10
+    # via -r requirements.txt
 soupsieve==2.9.2
     # via beautifulsoup4
-tomli==2.4.1
-    # via coverage
 tqdm==4.70.0
     # via google-generativeai
 typing-extensions==4.16.0
     # via
-    #   anyio
     #   beautifulsoup4
     #   google-generativeai
     #   grpcio
+    #   limits
     #   pydantic
     #   pydantic-core
-    #   pytest-asyncio
     #   typing-inspection
 typing-inspection==0.4.4
     # via pydantic
+tzdata==2026.4
+    # via tzlocal
 tzlocal==5.4.4
     # via apscheduler
 uritemplate==4.2.0
     # via google-api-python-client
 urllib3==2.7.0
     # via requests
+uvicorn==0.54.0
+    # via -r requirements.txt
+wrapt==2.4.1
+    # via deprecated

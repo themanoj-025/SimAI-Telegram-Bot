@@ -13,7 +13,7 @@ pytestmark = pytest.mark.integration
 
 
 @pytest.fixture
-def cache(tmp_path) -> None:
+def cache(tmp_path) -> CacheManager:
     """Create a CacheManager with a temporary SQLite database."""
     db_path = str(tmp_path / "test_cache.db")
     return CacheManager(db_path=db_path)
