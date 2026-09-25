@@ -34,7 +34,8 @@ class GitHubScraper(AsyncBaseScraper):
                 if not title_elem:
                     continue
 
-                full_name = title_elem.get("href", "").strip("/")
+                href_value = title_elem.get("href", "")
+                full_name = (str(href_value) if isinstance(href_value, str) else "").strip("/")
                 title = " ".join(title_elem.get_text(" ", strip=True).split())
 
                 description_elem = repo.select_one("p")

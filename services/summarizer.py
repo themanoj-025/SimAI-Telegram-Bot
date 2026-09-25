@@ -17,6 +17,8 @@ logger = setup_logger(__name__)
 
 
 class Summarizer:
+    model: Any  # ``GenerativeModel | None`` — None enables the fallback path
+
     def __init__(self) -> None:
         self.config = Config()
         self.gemini_key = self.config.GEMINI_API_KEY
