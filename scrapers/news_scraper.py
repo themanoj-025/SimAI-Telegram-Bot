@@ -32,9 +32,9 @@ class NewsScraper(AsyncBaseScraper):
         self.feeds = self.config.RSS_FEEDS.get("news", [])
 
     async def fetch_news(self, limit: int = 5) -> list[Article]:
-        articles = []
+        articles: list[Article] = []
 
-        async def fetch_feed(url) -> None:
+        async def fetch_feed(url) -> list[Article]:
             try:
                 content = await self.fetch_url(url)
                 if not content:
@@ -177,11 +177,11 @@ class YouTubeScraper(AsyncBaseScraper):
         self.feeds = self.config.RSS_FEEDS.get("youtube", [])
 
     async def fetch_youtube(self, limit: int = 5) -> list[Article]:
-        articles = []
-        feeds_shuffled = self.feeds.copy()
+        articles: list[Article] = []
+        feeds_shuffled = list(self.feeds)
         random.shuffle(feeds_shuffled)
 
-        async def fetch_yt_feed(url) -> None:
+        async def fetch_yt_feed(url) -> list[Article]:
             try:
                 content = await self.fetch_url(url, timeout=5)
                 if not content:

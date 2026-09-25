@@ -2,6 +2,7 @@
 
 import os
 import tempfile
+from collections.abc import Generator
 
 import pytest
 
@@ -9,7 +10,7 @@ from utils.cache_manager import CacheManager
 
 
 @pytest.fixture
-def cache_db() -> None:
+def cache_db() -> Generator[CacheManager, None, None]:
     with tempfile.TemporaryDirectory() as tmpdir:
         db_path = os.path.join(tmpdir, "test_cache.db")
         cm = CacheManager(db_path=db_path)

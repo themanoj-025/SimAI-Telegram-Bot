@@ -26,7 +26,7 @@ class AsyncBaseScraper:
             try:
                 response = await client.get(url, timeout=request_timeout)
                 response.raise_for_status()
-                return response.text
+                return str(response.text)
             except (httpx.HTTPError, httpx.TimeoutException) as e:
                 logger.error(f"Error fetching {url}: {e}")
                 return None

@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -14,7 +15,7 @@ class Config:
     ARTICLES_PER_SECTION = 5
     CACHE_EXPIRY_HOURS = 6
 
-    RSS_FEEDS = {
+    RSS_FEEDS: dict[str, Any] = {
         "news": [
             "https://techcrunch.com/category/artificial-intelligence/feed/",
             "https://venturebeat.com/category/ai/feed/",
@@ -189,4 +190,6 @@ class Config:
 
     LOG_LEVEL = "INFO"
     LOG_FILE = "ai_daily_bot.log"
-    REPORT_TIME = datetime.now().replace(hour=9, minute=0, second=0, microsecond=0)  # Default report time
+    REPORT_TIME = datetime.now().replace(
+        hour=9, minute=0, second=0, microsecond=0
+    )  # Default report time

@@ -20,21 +20,27 @@ async def test_scrapers() -> None:
         articles = await news_scraper.fetch_news(limit=3)
         print(f"FETCHED {len(articles)} news articles.")
         for article in articles:
-            print(f"  * {safe_console_text(article.title[:50])}... ({safe_console_text(article.source)})")
+            print(
+                f"  * {safe_console_text(article.title[:50])}... ({safe_console_text(article.source)})"
+            )
 
         print("\n--- Testing YouTubeScraper ---")
         yt_scraper = YouTubeScraper()
         videos = await yt_scraper.fetch_youtube(limit=3)
         print(f"FETCHED {len(videos)} YouTube videos.")
         for video in videos:
-            print(f"  * {safe_console_text(video.title[:50])}... ({safe_console_text(video.source)})")
+            print(
+                f"  * {safe_console_text(video.title[:50])}... ({safe_console_text(video.source)})"
+            )
 
         print("\n--- Testing GitHubScraper ---")
         gh_scraper = GitHubScraper()
         repos = await gh_scraper.fetch_trending(limit=3)
         print(f"FETCHED {len(repos)} trending repos.")
         for repo in repos:
-            print(f"  * {safe_console_text(repo['title'][:50])}... ({safe_console_text(repo['source'])})")
+            print(
+                f"  * {safe_console_text(repo['title'][:50])}... ({safe_console_text(repo['source'])})"
+            )
 
         print("\n--- Testing Full Report Generation ---")
         report = await report_gen.generate_report("all")

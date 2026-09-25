@@ -14,10 +14,12 @@ class ExtendedScraper(AsyncBaseScraper):
         super().__init__()
         self.cache = CacheManager()
 
-    async def fetch_category(self, category: str, limit: int = 5, force_refresh: bool = False) -> list[dict]:
+    async def fetch_category(
+        self, category: str, limit: int = 5, force_refresh: bool = False
+    ) -> list[dict]:
         """Fetch data for a specific category, using cache if fresh unless force_refresh is True."""
         if not force_refresh:
-            cached_data = self.cache.get_cached_data(category)
+            cached_data: list[dict] | None = self.cache.get_cached_data(category)
             if cached_data:
                 logger.info(f"Returning cached data for {category}")
                 return cached_data
@@ -59,7 +61,7 @@ class ExtendedScraper(AsyncBaseScraper):
             self.cache.update_cache(category, result)
             return result
 
-        stale_cache = self.cache.get_latest_cached_data(category)
+        stale_cache: list[dict] | None = self.cache.get_latest_cached_data(category)
         if stale_cache:
             logger.warning(f"Live fetch failed for {category}; returning cached fallback data.")
             return stale_cache[:limit]
@@ -69,40 +71,40 @@ class ExtendedScraper(AsyncBaseScraper):
 
 
 class ToolScraper(ExtendedScraper):
-    async def fetch_tools(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_tools(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("tools", limit, force_refresh)
 
 
 class JobScraper(ExtendedScraper):
-    async def fetch_jobs(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_jobs(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("jobs", limit, force_refresh)
 
 
 class StartupScraper(ExtendedScraper):
-    async def fetch_startups(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_startups(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("startups", limit, force_refresh)
 
 
 class ModelScraper(ExtendedScraper):
-    async def fetch_models(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_models(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("models", limit, force_refresh)
 
 
 class DatasetScraper(ExtendedScraper):
-    async def fetch_datasets(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_datasets(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("datasets", limit, force_refresh)
 
 
 class TrendingScraper(ExtendedScraper):
-    async def fetch_trending(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_trending(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("trending", limit, force_refresh)
 
 
 class LearnScraper(ExtendedScraper):
-    async def fetch_learn(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_learn(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("learn", limit, force_refresh)
 
 
 class ConferenceScraper(ExtendedScraper):
-    async def fetch_conferences(self, limit: int = 5, force_refresh: bool = False) -> None:
+    async def fetch_conferences(self, limit: int = 5, force_refresh: bool = False) -> list[dict]:
         return await self.fetch_category("conferences", limit, force_refresh)

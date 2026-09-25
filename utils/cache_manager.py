@@ -3,6 +3,7 @@ import os
 import sqlite3
 from contextlib import closing
 from datetime import datetime, timedelta
+from typing import Any
 
 from utils.logger import setup_logger
 
@@ -43,7 +44,8 @@ class CacheManager:
         except sqlite3.Error as e:
             logger.error(f"Error initializing SQLite cache database: {e}")
 
-    def get_cached_data(self, category, max_age_hours=6) -> None:
+    def get_cached_data(self, category, max_age_hours=6) -> Any:
+        """Return the cached payload for ``category`` if fresh, else ``None``."""
         try:
             with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
@@ -63,7 +65,8 @@ class CacheManager:
             logger.error(f"Error reading from cache: {e}")
             return None
 
-    def get_latest_cached_data(self, category) -> None:
+    def get_latest_cached_data(self, category) -> Any:
+        """Return the most recent cached payload for ``category``, else ``None``."""
         try:
             with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
@@ -90,7 +93,7 @@ class CacheManager:
         except sqlite3.Error as e:
             logger.error(f"Error updating cache: {e}")
 
-    def is_duplicate(self, category, item_id) -> None:
+    def is_duplicate(self, category, item_id) -> bool:
         try:
             with closing(sqlite3.connect(self.db_path)) as conn:
                 cursor = conn.cursor()
