@@ -110,7 +110,8 @@ class IndianAINewsScraper(AsyncBaseScraper):
                 links = soup.find_all("a", href=True)
                 for link in links:
                     title = link.get_text().strip()
-                    href = link["href"]
+                    href_value = link.get("href")
+                    href = str(href_value) if isinstance(href_value, str) else ""
                     if len(title) > 40 and "http" in href:
                         if href not in [a["link"] for a in articles]:
                             articles.append(
