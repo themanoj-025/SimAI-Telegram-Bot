@@ -44,9 +44,8 @@ class TestFallbackData:
         for category, articles in FALLBACK_CONTENT.items():
             for i, article in enumerate(articles):
                 link = article["link"]
-                assert link.startswith(
-                    "http"
-                ), f"{category}[{i}] link '{link}' doesn't start with http"
+                msg = f"{category}[{i}] link '{link}' doesn't start with http"
+                assert link.startswith("http"), msg
 
     def test_get_fallback_articles_returns_list(self) -> None:
         result = get_fallback_articles("news", 5)
