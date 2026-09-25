@@ -14,7 +14,7 @@ from __future__ import annotations
 import logging
 import threading
 import time
-from typing import Any
+from typing import Any, cast
 
 import uvicorn
 from fastapi import FastAPI
@@ -60,7 +60,9 @@ app = FastAPI(
 )
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+# slowapi's handler signature is narrower than Starlette's protocol;
+# cast keeps mypy happy without changing the registration.
+app.add_exception_handler(RateLimitExceeded, cast(Any, _rate_limit_exceeded_handler))
 
 # Prometheus metrics
 if _PROM_AVAILABLE:
