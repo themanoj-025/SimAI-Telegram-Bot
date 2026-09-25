@@ -1,12 +1,18 @@
 import asyncio
 
 import telegram.error
-from telegram import Update
+from telegram import Message, Update
 from telegram.constants import ParseMode
 
 from utils.logger import setup_logger
 
 logger = setup_logger(__name__)
+
+
+def _msg(update: Update) -> Message:
+    """Return ``update.message`` — command/message handlers always carry one."""
+    assert update.message is not None
+    return update.message
 
 
 async def send_split_message(
@@ -21,7 +27,7 @@ async def send_split_message(
     MAX_LENGTH = 4000  # Slightly less than 4096 to be safe
 
     if len(text) <= MAX_LENGTH:
-        await update.message.reply_text(text, parse_mode=parse_mode)
+        await _msg(update).reply_text(text, parse_mode=parse_mode)
         return
 
     # Split by double newline if possible to preserve structure
@@ -65,11 +71,11 @@ async def send_split_message(
         try:
             # Re-apply Markdown to each part (might need care if a tag is split)
             # Simple approach: ensure each part is valid markdown
-            await update.message.reply_text(part, parse_mode=parse_mode)
+            await _msg(update).reply_text(part, parse_mode=parse_mode)
             # Small delay to prevent rate limit issues
             if i < len(parts) - 1:
                 await asyncio.sleep(0.5)
         except (telegram.error.TelegramError, OSError) as e:
             logger.error(f"Error sending part {i}: {e}")
             # Fallback without markdown if it fails
-            await update.message.reply_text(part)
+            await _msg(update).reply_text(part)
