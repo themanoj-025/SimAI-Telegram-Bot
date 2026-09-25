@@ -1,7 +1,7 @@
 import asyncio
 import sys
 import time
-from collections.abc import Awaitable, Callable
+from collections.abc import Callable, Coroutine
 from typing import Any
 
 from telegram import BotCommand, Update
@@ -20,7 +20,7 @@ from services.report_generator import ReportGenerator
 from services.scheduler import SchedulerService
 from services.summarizer import Summarizer
 from utils.logger import setup_logger
-from utils.telegram_utils import send_split_message
+from utils.telegram_utils import _msg, send_split_message
 
 logger = setup_logger(__name__)
 report_generator = ReportGenerator()
@@ -81,7 +81,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 /help - Show all commands
 
 _Fresh AI updates every 2 hours._"""
-    await update.message.reply_text(welcome, parse_mode="Markdown")
+    await _msg(update).reply_text(welcome, parse_mode="Markdown")
 
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -91,13 +91,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def generic_command(
     update: Update, context: ContextTypes.DEFAULT_TYPE, category: str
 ) -> None:
-    await update.message.reply_text("Fetching updates...")
+    await _msg(update).reply_text("Fetching updates...")
     try:
         report = await report_generator.generate_report(category)
         await send_split_message(update, report)
     except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in {category} command: {e}")
-        await update.message.reply_text(f"Error fetching {category}. Try again.")
+        await _msg(update).reply_text(f"Error fetching {category}. Try again.")
 
 
 async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -105,7 +105,7 @@ async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Generating AI summary...")
+    await _msg(update).reply_text("Generating AI summary...")
     try:
         from scrapers.news_scraper import NewsScraper
 
@@ -117,48 +117,48 @@ async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await send_split_message(update, f"*AI News Summary*\n\n{summary}")
     except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in summary command: {e}")
-        await update.message.reply_text("Error generating summary.")
+        await _msg(update).reply_text("Error generating summary.")
 
 
 async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     args = _get_command_query(update, context, "compare")
     if not args:
-        await update.message.reply_text(
+        await _msg(update).reply_text(
             "*Usage:* `/compare GPT-4o vs Claude vs Gemini`\n\n"
             "Supported models: GPT-4o, GPT-4.5, Claude, Gemini, Llama, DeepSeek, Mistral, Qwen, Grok",
             parse_mode="Markdown",
         )
         return
 
-    await update.message.reply_text("Comparing AI models...")
+    await _msg(update).reply_text("Comparing AI models...")
     try:
         result = await report_generator.generate_compare(args)
         await send_split_message(update, result)
     except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in compare command: {e}")
-        await update.message.reply_text("Error generating comparison. Try again.")
+        await _msg(update).reply_text("Error generating comparison. Try again.")
 
 
 async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     role = _get_command_query(update, context, "roadmap") or "ai engineer"
-    await update.message.reply_text("Building your AI roadmap...")
+    await _msg(update).reply_text("Building your AI roadmap...")
     try:
         result = await report_generator.generate_roadmap(role)
         await send_split_message(update, result)
     except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in roadmap command: {e}")
-        await update.message.reply_text("Error generating roadmap. Try again.")
+        await _msg(update).reply_text("Error generating roadmap. Try again.")
 
 
 async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     filter_term = _get_command_query(update, context, "leaderboard")
-    await update.message.reply_text("Fetching AI model leaderboard...")
+    await _msg(update).reply_text("Fetching AI model leaderboard...")
     try:
         result = await report_generator.generate_leaderboard(filter_term)
         await send_split_message(update, result)
     except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in leaderboard command: {e}")
-        await update.message.reply_text("Error fetching leaderboard. Try again.")
+        await _msg(update).reply_text("Error fetching leaderboard. Try again.")
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -187,7 +187,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     elif "twitter" in text or " x " in text or "tweet" in text:
         await generic_command(update, context, "twitter")
     else:
-        await update.message.reply_text("Try /daily, /compare, /roadmap, /leaderboard, or /help.")
+        await _msg(update).reply_text("Try /daily, /compare, /roadmap, /leaderboard, or /help.")
 
 
 def make_broadcast_callback(
@@ -301,7 +301,7 @@ def main() -> None:
 
     def create_handler(
         category_name,
-    ) -> Callable[[Update, ContextTypes.DEFAULT_TYPE], Awaitable[None]]:
+    ) -> Callable[[Update, ContextTypes.DEFAULT_TYPE], Coroutine[Any, Any, None]]:
         async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await generic_command(update, context, category_name)
 

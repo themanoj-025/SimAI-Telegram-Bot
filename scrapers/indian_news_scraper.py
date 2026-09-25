@@ -77,15 +77,14 @@ class IndianAINewsScraper(AsyncBaseScraper):
                 link = heading.find("a", href=True)
                 if not link:
                     # Maybe the heading is inside a link
-                    link = (
-                        heading.parent
-                        if heading.parent.name == "a" and heading.parent.has_attr("href")
-                        else None
-                    )
+                    parent = heading.parent
+                    if parent is not None and parent.name == "a" and parent.has_attr("href"):
+                        link = parent
 
-                if link:
+                if link is not None:
                     title = link.get_text().strip()
-                    href = link["href"]
+                    href_value = link.get("href")
+                    href = str(href_value) if isinstance(href_value, str) else ""
 
                     if not href.startswith("http"):
                         # Handle relative links
