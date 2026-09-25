@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -10,7 +11,7 @@ import run_bot
 pytestmark = pytest.mark.integration
 
 
-def make_update(message_text: str = "/test") -> None:
+def make_update(message_text: str = "/test") -> Any:
     update = MagicMock(spec=Update)
     update.message = AsyncMock(spec=Message)
     update.message.text = message_text

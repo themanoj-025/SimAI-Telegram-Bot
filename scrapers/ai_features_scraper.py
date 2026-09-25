@@ -6,6 +6,7 @@ Curated data helpers for:
 """
 
 import re
+from typing import Any
 
 from utils.logger import setup_logger
 
@@ -161,7 +162,7 @@ MODEL_ALIASES = {
     "r1": "deepseek",
 }
 
-STATIC_LEADERBOARD = [
+STATIC_LEADERBOARD: list[dict[str, Any]] = [
     {
         "rank": 1,
         "model": "GPT-4.5",
@@ -380,7 +381,7 @@ class AICompareScraper:
         parts = re.split(r"\s+vs\.?\s+|\s+and\s+|,\s*", models_input, flags=re.IGNORECASE)
         parts = [part.strip().lower() for part in parts if part.strip()]
 
-        resolved = []
+        resolved: list[tuple[str, dict[str, Any]]] = []
         for name in parts:
             key = self._resolve_model(name)
             if key and key not in [item[0] for item in resolved]:
@@ -510,7 +511,9 @@ class AILeaderboardScraper:
             if filtered:
                 data = filtered
             else:
-                logger.info(f"No leaderboard matches for filter '{filter_input}', returning the full curated list.")
+                logger.info(
+                    f"No leaderboard matches for filter '{filter_input}', returning the full curated list."
+                )
 
         lines = [
             "*AI Model Leaderboard*",

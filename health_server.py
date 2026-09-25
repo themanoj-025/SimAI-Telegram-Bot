@@ -99,7 +99,9 @@ async def add_security_headers(request, call_next) -> Any:
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
     response.headers["X-XSS-Protection"] = "0"
-    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    response.headers["Permissions-Policy"] = (
+        "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+    )
     response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none';"
     return response
 
@@ -134,7 +136,7 @@ async def health() -> dict[str, str]:
 
 
 @app.get("/health/ready", tags=["health"], summary="Readiness probe")
-async def health_ready() -> dict[str, Any]:
+async def health_ready() -> JSONResponse:
     """Returns 200 only when the bot is fully initialized.
 
     Use this as the Docker/Kubernetes **readiness** probe. The bot reports
@@ -188,9 +190,12 @@ def start_health_server(port: int = 8080) -> threading.Thread:
 
     def _run() -> None:
         try:
+            # Bind to all interfaces: required inside containers so Docker/
+            # k8s health probes from other netns can reach the endpoint.
+            # (bandit B104 is intentionally accepted here.)
             uvicorn.run(
                 app,
-                host="0.0.0.0",
+                host="0.0.0.0",  # nosec B104 - container health-probe binding
                 port=port,
                 log_level="warning",
                 access_log=False,

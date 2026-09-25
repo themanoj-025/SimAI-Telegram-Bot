@@ -16,7 +16,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
     def __init__(self) -> None:
         super().__init__()
         self.rss_feeds = self.config.RSS_FEEDS.get("indian_ai", [])
-        self.sources = self.config.RSS_FEEDS.get("indian_ai_sources", {})
+        self.sources = dict(self.config.RSS_FEEDS.get("indian_ai_sources", {}))
         self.browser_headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -30,7 +30,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
                 response = await client.get(url, timeout=15)
                 logger.info(f"Fetched {url} - Status: {response.status_code}")
                 response.raise_for_status()
-                return response.text
+                return str(response.text)
             except (httpx.HTTPError, httpx.TimeoutException) as e:
                 logger.error(f"Error fetching {url}: {e}")
                 return None
@@ -44,7 +44,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
         try:
             feed = feedparser.parse(content)
             source_name = feed.feed.get("title", "Indian AI News")
-            articles = []
+            articles: list[dict] = []
             for entry in feed.entries[:limit]:
                 # Heuristic: Filter for India related keywords if it's a general feed
                 title = entry.get("title", "No Title")
@@ -68,7 +68,7 @@ class IndianAINewsScraper(AsyncBaseScraper):
         if not content:
             return []
 
-        articles = []
+        articles: list[dict] = []
         try:
             soup = BeautifulSoup(content, "html.parser")
             # Improved heuristic: look for <h2>, <h3>, or <a> with significant text
@@ -77,7 +77,11 @@ class IndianAINewsScraper(AsyncBaseScraper):
                 link = heading.find("a", href=True)
                 if not link:
                     # Maybe the heading is inside a link
-                    link = heading.parent if heading.parent.name == "a" and heading.parent.has_attr("href") else None
+                    link = (
+                        heading.parent
+                        if heading.parent.name == "a" and heading.parent.has_attr("href")
+                        else None
+                    )
 
                 if link:
                     title = link.get_text().strip()

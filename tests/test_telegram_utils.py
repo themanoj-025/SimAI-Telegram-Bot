@@ -10,7 +10,7 @@ pytestmark = pytest.mark.integration
 
 
 @pytest.fixture
-def mock_update() -> None:
+def mock_update() -> MagicMock:
     update = MagicMock()
     update.message = AsyncMock()
     update.message.reply_text = AsyncMock()

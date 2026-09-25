@@ -29,7 +29,7 @@ class Summarizer:
             self.model = None
             logger.warning("GEMINI_API_KEY not found. Falling back to simple summaries.")
 
-    async def summarize_articles(self, articles) -> None:
+    async def summarize_articles(self, articles) -> str:
         if not articles:
             return "No articles are available to summarize right now."
 
@@ -50,12 +50,12 @@ class Summarizer:
                 self.model.generate_content_async(prompt),
                 timeout=8,
             )
-            return response.text
+            return str(response.text)
         except (RuntimeError, ValueError, OSError) as e:
             logger.error(f"Error generating summary: {type(e).__name__}: {e}")
             return self.get_simple_summary(articles)
 
-    def get_simple_summary(self, articles) -> None:
+    def get_simple_summary(self, articles) -> str:
         """Fallback: just list titles if LLM is unavailable."""
         summary = "*Today's Top AI Stories:*\n\n"
         for i, article in enumerate(articles[:10], 1):
