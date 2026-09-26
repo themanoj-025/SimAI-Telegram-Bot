@@ -1,0 +1,19 @@
+# Trivy ignore — AI Telegram News Bot image
+#
+# Both entries below are Debian system packages under
+# /usr/lib/python3/dist-packages (they ship with the python:3.11-slim
+# base image, Debian trixie). The pip-space copies ARE upgraded in the
+# Dockerfile deps stage (setuptools>=83.0.0, wheel>=0.46.2) — verify with:
+#   docker run --rm ai-news-bot:ci pip show setuptools wheel
+# The system copies are managed by apt, not pip; suppressing them here
+# until the base image ships fixed versions.
+#
+# CVE-2025-47273: setuptools path traversal in PackageIndex — not
+# reachable: the image never runs setuptools at runtime (the bot runs
+# from installed wheels; no build/install steps post-install).
+CVE-2025-47273
+
+# GHSA-6v7p-g79w-8964: msgpack out-of-bounds read on Unpacker reuse —
+# not reachable: msgpack exists only as a base-image system package and
+# is not imported by the bot or any of its runtime dependencies.
+GHSA-6v7p-g79w-8964
