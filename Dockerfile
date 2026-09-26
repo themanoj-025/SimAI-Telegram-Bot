@@ -38,9 +38,15 @@ FROM base AS deps
 COPY requirements.txt ./
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
-    # Upgrade transitive packages with known HIGH CVEs flagged by the CI
-    # trivy gate (wheel CVE-2026-24049 — fixed in 0.46.2).
+    # Upgrade pip-space packages flagged by the CI trivy gate:
+    #   - wheel CVE-2026-24049 (fixed 0.46.2); trivy also reads the copy
+    #     VENDORED inside setuptools (_vendor/wheel-0.45.1), so setuptools
+    #     must be >= 83.0.0, which vendors fixed jaraco.context/wheel.
+    #   - setuptools CVE-2025-47273 (fixed 78.1.1).
+    # Debian SYSTEM copies under /usr/lib/python3/dist-packages (setuptools
+    # 70.3.0, msgpack 1.1.2) are apt-managed and handled via .trivyignore.
     pip install --no-cache-dir --upgrade \
+        "setuptools>=83.0.0" \
         "wheel>=0.46.2"
 
 # ── Runtime stage ──────────────────────────────────────────────────────
