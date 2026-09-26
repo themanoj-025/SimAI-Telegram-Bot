@@ -37,7 +37,11 @@ FROM base AS deps
 
 COPY requirements.txt ./
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    # Upgrade transitive packages with known HIGH CVEs flagged by the CI
+    # trivy gate (wheel CVE-2026-24049 — fixed in 0.46.2).
+    pip install --no-cache-dir --upgrade \
+        "wheel>=0.46.2"
 
 # ── Runtime stage ──────────────────────────────────────────────────────
 FROM deps AS prod
