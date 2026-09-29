@@ -63,9 +63,13 @@ class ReadableFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
         rid = get_request_id()
         prefix = f"[{rid}] " if rid else ""
-        return (
-            f"{prefix}{record.asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
-        )
+        asctime = getattr(record, "asctime", "")
+        if not asctime:
+            # Used when the handler's fmt string supplies asctime itself.
+            asctime = datetime.fromtimestamp(record.created, tz=UTC).strftime("%Y-%m-%d %H:%M:%S")
+        return f"{prefix}{asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
+
+
 
 
 def _ensure_utf8_console() -> None:

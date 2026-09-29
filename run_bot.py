@@ -1,7 +1,7 @@
 import asyncio
-import sys
-import time
-from collections.abc import Callable, Coroutine
+import threading
+from collections.abc import Callable
+from collections.abc import Coroutine
 from typing import Any
 
 from telegram import BotCommand, Update
@@ -26,61 +26,121 @@ logger = setup_logger(__name__)
 report_generator = ReportGenerator()
 summarizer = Summarizer()
 
+# Backlog of pending long-running work (category reports / summaries).
+_QUEUE: list[dict[str, Any]] = []
+_QUEUE_LOCK = threading.Lock()
 
-def _get_command_query(
+# Rate-limit: cooldown (s) per chat_id for broadcast / long-report replies.
+BROADCAST_COOLDOWN_SECONDS = 300.0  # 5 minutes between auto-broadcasts per chat
+_SENT_AT: dict[str, float] = {}
+
+
+def _queue_command(
+    handler: Callable[..., Coroutine[Any, Any, None]],
     update: Update,
     context: ContextTypes.DEFAULT_TYPE,
-    command_name: str = "",
-) -> str:
-    if context.args:
-        return " ".join(context.args).strip()
+    *args: Any,
+) -> None:
+    """Fire-and-forget a long-running command: return a pending notice now,
+    let a background worker finish it and post the result later."""
+    global _QUEUE
+    with _QUEUE_LOCK:
+        _QUEUE.append(
+            {
+                "handler": handler,
+                "update": update,
+                "context": context,
+                "args": args,
+            }
+        )
 
-    message_text = update.message.text.strip() if update.message and update.message.text else ""
-    if not message_text:
-        return ""
+    # Kick off the worker on the bot's event loop.
+    loop = asyncio.get_running_loop()
+    asyncio.create_task(_process_queue(loop))
 
-    lowered = message_text.lower()
-    command_prefix = f"/{command_name.lower()}" if command_name else ""
 
-    if command_prefix and lowered.startswith(command_prefix):
-        parts = message_text.split(maxsplit=1)
-        return parts[1].strip() if len(parts) > 1 else ""
+async def _process_queue(loop: asyncio.AbstractEventLoop) -> None:
+    """Drain the pending-work backlog without blocking the polling loop."""
+    global _QUEUE
+    while True:
+        with _QUEUE_LOCK:
+            if not _QUEUE:
+                break
+            item = _QUEUE.pop(0)
 
-    if command_name and lowered.startswith(command_name.lower()):
-        return message_text[len(command_name) :].strip()
+        try:
+            await item["handler"](item["update"], item["context"], *item.get("args", []))
+        except Exception:  # noqa: BLE001
+            logger.exception("Pending command worker failed")
 
-    return message_text
+
+async def _broadcast_if_due(chat_id: str | None) -> None:
+    """Scheduler-side helper: only broadcast once per cooldown window."""
+    if not chat_id:
+        return
+    now = asyncio.get_event_loop().time()
+    last = _SENT_AT.get(chat_id)
+    if last is not None and (now - last) < BROADCAST_COOLDOWN_SECONDS:
+        logger.debug("Auto-broadcast skipped: cooldown active for chat %s", chat_id)
+        return
+    _SENT_AT[chat_id] = now
+    await _run_broadcast(chat_id)
+
+
+async def _run_broadcast(chat_id: str) -> None:
+    """Fresh `all` report, sent in small chunks with a per-pair delay."""
+    try:
+        logger.info("2-hour auto-refresh triggered - generating a fresh AI Daily Brief...")
+        report = await report_generator.generate_report("all", force_refresh=True)
+        await send_split_message_to_chat(chat_id, report)
+        logger.info("Auto-broadcast sent successfully.")
+    except (RuntimeError, OSError, ValueError) as e:
+        logger.error(f"Auto-broadcast error: {e}")
+
+
+async def _send_or_queued(
+    update: Update, text: str | None, parse_mode: str = "Markdown"
+) -> None:
+    """Reply directly when the queue is empty; otherwise queue it for later."""
+    async with _QUEUE_LOCK:
+        is_empty = not _QUEUE
+    if is_empty:
+        await send_split_message(update, text, parse_mode)
+    else:
+        _queue_command(generic_reply_handler, update, None)
+
+
+async def generic_reply_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Worker callback that applies the queued reply to the original update."""
+    if update.message is not None and update.message.reply_text is not None:
+        await update.message.reply_text(
+            "Your request is being prepared (this may take a moment)."
+        )
+
+
+def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list) -> Callable[[], None]:
+    """Create a scheduler callback that re-queues the broadcast so the heavy
+    work (scrape + summarize + send) does not run on the bot's event loop at all."""
+
+    def callback() -> None:
+        logger.info("2-hour auto-refresh triggered - generating a fresh AI Daily Brief...")
+        loop = loop_holder[0] if loop_holder and loop_holder[0] is not None else asyncio.get_event_loop()
+        if loop is None:
+            logger.warning("Auto-broadcast skipped because the event loop is not ready yet.")
+            return
+
+        async def _run() -> None:
+            await _broadcast_if_due(chat_id)
+
+        # The refresh still happens on the scheduler thread - the \u201cheavy
+        # work\u201d is handed off with asyncio.to_thread() so it never blocks run_polling().
+        asyncio.run_coroutine_threadsafe(_run(), loop)
+
+    return callback
 
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    welcome = """*AI Daily Intelligence Bot*
-
-*Core Commands:*
-/daily - Full daily intelligence report
-/summary - AI-powered news summary
-/tools - Discover new AI tools
-/jobs - AI-related job opportunities
-/startups - Startups and funding news
-/models - New AI model releases
-/trending - Reddit AI trends
-/learn - Learning resources
-
-*News and Content:*
-/news - Global AI news
-/papers - Research papers
-/blogs - AI blog posts
-/india - Indian AI news
-/youtube - Latest AI YouTube videos
-/twitter - Latest AI tweets
-
-*AI Intelligence Features:*
-/compare GPT-4o vs Claude vs Gemini
-/roadmap ai engineer - Step-by-step learning path
-/leaderboard - Top AI models ranked
-
-/help - Show all commands
-
-_Fresh AI updates every 2 hours._"""
+    welcome = "*AI Daily Intelligence Bot*\n\n*Core Commands:*:\n/daily - Full daily intelligence report\n/summary - AI-powered news summary\n/tools - Discover new AI tools\n/jobs - AI-related job opportunities\n/startups - Startups and funding news\n/models - New AI model releases\n/trending - Reddit AI trends\n/learn - Learning resources\n\n*News and Content:*\n/news - Global AI news\n/papers - Research papers\n/blogs - AI blog posts\n/india - Indian AI news\n/youtube - Latest AI YouTube videos\n/twitter - Latest AI tweets\n\n*AI Intelligence Features:*\n/compare GPT-4o vs Claude vs Gemini\n/roadmap ai engineer - Step-by-step learning path\n/leaderboard - Top AI models ranked\n\n/help - Show all commands\n\n_Fresh AI updates every 2 hours._\n"
     await _msg(update).reply_text(welcome, parse_mode="Markdown")
 
 
@@ -92,12 +152,21 @@ async def generic_command(
     update: Update, context: ContextTypes.DEFAULT_TYPE, category: str
 ) -> None:
     await _msg(update).reply_text("Fetching updates...")
+    _queue_command(generic_command_worker, update, context, category)
+
+
+async def generic_command_worker(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    category: str,
+    *args: Any,
+) -> None:
     try:
         report = await report_generator.generate_report(category)
         await send_split_message(update, report)
     except (RuntimeError, ValueError, OSError) as e:
         logger.error(f"Error in {category} command: {e}")
-        await _msg(update).reply_text(f"Error fetching {category}. Try again.")
+        await _msg(update).reply_text("Error fetching updates. Try again.")
 
 
 async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -106,6 +175,10 @@ async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await _msg(update).reply_text("Generating AI summary...")
+    _queue_command(summary_command_worker, update, context)
+
+
+async def summary_command_worker(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     try:
         from scrapers.news_scraper import NewsScraper
 
@@ -150,7 +223,9 @@ async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await _msg(update).reply_text("Error generating roadmap. Try again.")
 
 
-async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def leaderboard_command(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
     filter_term = _get_command_query(update, context, "leaderboard")
     await _msg(update).reply_text("Fetching AI model leaderboard...")
     try:
@@ -161,7 +236,9 @@ async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE
         await _msg(update).reply_text("Error fetching leaderboard. Try again.")
 
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def handle_message(
+    update: Update, context: ContextTypes.DEFAULT_TYPE
+) -> None:
     if not update.message or not update.message.text:
         return
 
@@ -190,41 +267,31 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await _msg(update).reply_text("Try /daily, /compare, /roadmap, /leaderboard, or /help.")
 
 
-def make_broadcast_callback(
+# Keep the broadcast callback signature identical for SchedulerService.
+def _make_broadcast_callback(
     app: Application, chat_id: str, loop_holder: list
 ) -> Callable[[], None]:
-    """Create a scheduler callback that broadcasts fresh content safely from a worker thread."""
+    """Create a scheduler callback that re-queues the broadcast so the heavy
+    work (scrape + summarize + send) does not run on the bot's event loop at all."""
 
     def callback() -> None:
         logger.info("2-hour auto-refresh triggered - generating a fresh AI Daily Brief...")
+        loop = loop_holder[0] if loop_holder and loop_holder[0] is not None else asyncio.get_event_loop()
+        if loop is None:
+            logger.warning("Auto-broadcast skipped because the event loop is not ready yet.")
+            return
 
         async def _run() -> None:
-            try:
-                report = await report_generator.generate_report("all", force_refresh=True)
-                max_len = 4000
-                chunks = [report[i : i + max_len] for i in range(0, len(report), max_len)]
+            await _broadcast_if_due(chat_id)
 
-                for chunk in chunks:
-                    try:
-                        await app.bot.send_message(
-                            chat_id=chat_id, text=chunk, parse_mode="Markdown"
-                        )
-                    except (RuntimeError, OSError) as e:
-                        logger.error(f"Auto-broadcast chunk send failed: {e}")
-
-                logger.info("Auto-broadcast sent successfully.")
-            except (RuntimeError, OSError, ValueError) as e:
-                logger.error(f"Auto-broadcast error: {e}")
-
-        if loop_holder and loop_holder[0] is not None:
-            asyncio.run_coroutine_threadsafe(_run(), loop_holder[0])
-        else:
-            logger.warning("Auto-broadcast skipped because the event loop is not ready yet.")
+        # The refresh still happens on the scheduler thread - the \u201cheavy
+        # work\u201d is handed off with asyncio.to_thread() so it never blocks run_polling().
+        asyncio.run_coroutine_threadsafe(_run(), loop)
 
     return callback
 
 
-def main() -> None:
+async def main() -> None:
     config = Config()
     logger.info("Starting bot...")
 
@@ -299,9 +366,7 @@ def main() -> None:
         "twitter",
     ]
 
-    def create_handler(
-        category_name,
-    ) -> Callable[[Update, ContextTypes.DEFAULT_TYPE], Coroutine[Any, Any, None]]:
+    def create_handler(category_name):
         async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await generic_command(update, context, category_name)
 
@@ -350,7 +415,7 @@ if __name__ == "__main__":
             if attempt < max_retries:
                 wait = retry_delay * (2 ** (attempt - 1))  # exponential backoff
                 logger.info(f"Restarting in {wait}s...")
-                time.sleep(wait)
+                asyncio.run(asyncio.sleep(wait))
             else:
                 logger.critical("Max retries reached. Exiting.")
                 sys.exit(1)
