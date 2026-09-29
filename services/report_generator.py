@@ -56,37 +56,7 @@ class ReportGenerator:
         date_str = datetime.now().strftime("%B %d, %Y")
 
         if category == "all":
-            report = f"*AI Daily Brief*\n\n*Date:* {date_str}\n\n"
-            tasks = [
-                self.news_scraper.fetch_news(limit),
-                self.arxiv_scraper.fetch_papers(limit),
-                self.tool_scraper.fetch_tools(limit, force_refresh),
-                self.github_scraper.fetch_trending(limit),
-                self.startup_scraper.fetch_startups(limit, force_refresh),
-                self.model_scraper.fetch_models(limit, force_refresh),
-                self.indian_scraper.fetch_indian_ai_news(limit),
-                self.youtube_scraper.fetch_youtube(limit),
-            ]
-            headers = [
-                "News",
-                "Research Papers",
-                "Tools",
-                "GitHub Trending",
-                "Startups and Funding",
-                "Model Releases",
-                "Indian AI News",
-                "YouTube",
-            ]
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-
-            for header, result in zip(headers, results):
-                if isinstance(result, Exception):
-                    logger.error(f"Error fetching section {header}: {result}")
-                    report += self._format_section(header, [])
-                else:
-                    report += self._format_section(header, result)
-
-            return report
+            return await self._generate_all_report(limit, date_str, force_refresh)
 
         category_map = {
             "news": ("Global AI News", lambda: self.news_scraper.fetch_news(limit)),
@@ -138,6 +108,58 @@ class ReportGenerator:
 
         title, loader = category_map[category]
         return self._format_section(title, await loader())
+
+    async def _generate_all_report(self, limit: int, date_str: str, force_refresh: bool) -> str:
+        """Repeatedly try the full report until every section succeeds."""
+        last_error: BaseException | None = None
+
+        for attempt in range(1, self.config.MAX_RETRIES + 1):
+            report = f"*AI Daily Brief*\n\n*Date:* {date_str}\n\n"
+            tasks = [
+                self.news_scraper.fetch_news(limit),
+                self.arxiv_scraper.fetch_papers(limit),
+                self.tool_scraper.fetch_tools(limit, force_refresh),
+                self.github_scraper.fetch_trending(limit),
+                self.startup_scraper.fetch_startups(limit, force_refresh),
+                self.model_scraper.fetch_models(limit, force_refresh),
+                self.indian_scraper.fetch_indian_ai_news(limit),
+                self.youtube_scraper.fetch_youtube(limit),
+            ]
+            headers = [
+                "News",
+                "Research Papers",
+                "Tools",
+                "GitHub Trending",
+                "Startups and Funding",
+                "Model Releases",
+                "Indian AI News",
+                "YouTube",
+            ]
+
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+
+            for header, result in zip(headers, results):
+                if isinstance(result, Exception):
+                    logger.error(f"Error fetching section {header}: {result}")
+                    report += self._format_section(header, [])
+
+            if all(not isinstance(r, Exception) for r in results):
+                return report
+
+            last_error = results[0] if isinstance(results[0], Exception) else None
+            logger.warning(
+                "Attempt %s/%s failed for %s - retrying in %s seconds...",
+                attempt,
+                self.config.MAX_RETRIES,
+                "sections",
+                self.config.REQUEST_TIMEOUT,
+            )
+            await asyncio.sleep(self.config.REQUEST_TIMEOUT)
+
+        logger.error(f"All {self.config.MAX_RETRIES} report attempts failed: {last_error!r}")
+        return f"*AI Daily Brief*\n\n*Date:* {date_str}\n\n*Pending...*"
+
+    # ── category map + fallbacks ──────────────────────────────────────────
 
     async def generate_compare(self, models_input: str) -> str:
         return self.compare_scraper.compare(models_input)

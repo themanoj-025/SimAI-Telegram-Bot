@@ -1,3 +1,5 @@
+import asyncio
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
@@ -45,5 +47,42 @@ class SchedulerService:
         logger.info("Scheduler stopped.")
 
     def run_refresh_now(self) -> None:
+        """Refresh the daily report off the blocking Telegram polling loop."""
         logger.info("Manual refresh triggered!")
-        self.refresh_callback()
+
+        # Unwrap the callback up to its target so we can run the long work
+        # (scrape + summarize + send) off the event loop with to_thread().
+        target = self._unwrap(self.refresh_callback)
+
+        async def _worker() -> None:
+            try:
+                # Blocking I/O / LLM / report work runs in a thread pool.
+                await asyncio.to_thread(target)
+            except (RuntimeError, OSError, ValueError) as e:
+                logger.error(f"Refresh worker failed: {e}")
+
+        try:
+            asyncio.get_running_loop().create_task(_worker())
+        except RuntimeError:
+            # No running loop (e.g. called from the scheduler thread directly);
+            # run on the default loop instead.
+            asyncio.run(_worker())
+
+    @staticmethod
+    def _unwrap(callback: object) -> object:
+        """Follow .func/.__wrapped__/lambda attributes so the true target is run."""
+        target: object = callback
+        depth = 0
+        while depth < 8:
+            if not callable(target):
+                break
+            if hasattr(target, "__wrapped__"):
+                target = target.__wrapped__
+                depth += 1
+                continue
+            if hasattr(target, "func"):
+                target = target.func
+                depth += 1
+                continue
+            break
+        return target
