@@ -101,29 +101,23 @@ radar_balance.txt
 *.db-shm
 *.db-wal
 
-# =====================================================================
-# KEEP: AI provenance & transparency files — these must remain
-# visible to any repository viewer. Do not add rules above this block
-# that would shadow a directory these files live in without also
-# adding a negation here. Verified with `git check-ignore -v`.
-# =====================================================================
-!AI_DISCLOSURE.md
-!AI_USAGE.md
-!PROMPTS.md
-!AGENTS.md
-!CLAUDE.md
-!GEMINI.md
-!.cursorrules
-!.github/copilot-instructions.md
-!.claude/commands/
-!.claude/commands/**
-!.claude/agents/
-!.claude/agents/**
-!.claude/settings.json
-!docs/ai/
-!docs/ai/**
-!.ai/
-!.ai/**
-!ai-provenance.json
+
+# THEMANoj-025 — AI provenance & transparency negation block
+# These files MUST remain tracked and visible. Nothing below may be
+# shadowed by a preceding ignore rule — keep this block LAST in file.
+!.gitignore
+!.gitattributes
+!.editorconfig
 !.gitmessage
-!CITATION.cff
+
+# ─── AI provenance & transparency negation block (T2 저장소 전역 rules에만 의거한 2차 보호) ──
+# 아래 T2 managed block(/docs/ai/)이 docs/ai/ 전체를 ignore하므로,
+# 이 검증용 커밋이 파탄나지 않도록 해당 파일은 force-visible 상태로 남긴다. (§5A.12)
+!.gitignore
+!.gitattributes
+!.editorconfig
+!.gitmessage
+!docs/ai/PROMPTS.md
+!docs/ai/
+!docs/ai/PROVENANCE.md
+!docs/ai/transcripts/README.md
