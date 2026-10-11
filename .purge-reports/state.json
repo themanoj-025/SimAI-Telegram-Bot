@@ -1,0 +1,14 @@
+{
+  "repository": "AI-Telegram-News-Bot",
+  "mode": "AUDIT_ONLY",
+  "aggressiveness": 3,
+  "phase": 9,
+  "status": "COMPLETED_AUDIT",
+  "baseline_sha": "d3083879821707cc05cd11e9af3ad25af6434ee6",
+  "total_candidates": 58,
+  "t0_count": 39,
+  "t1_count": 0,
+  "t2_count": 19,
+  "t3_count": 0,
+  "updated_at": "2026-10-11T07:39:11.920Z"
+}
