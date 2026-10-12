@@ -26,7 +26,7 @@
 - [✨ Features](#-features)
 - [🏗️ Architecture](#️-architecture)
 - [🚀 Quick start](#-quick-start)
-- [📋 Environment variables](#-environment-variables)
+- [📋 Environment variables](#environment-variables)
 - [📁 Project structure](#-project-structure)
 - [🧪 Testing](#-testing)
 - [🚢 Deployment](#-deployment)
@@ -120,7 +120,7 @@ python main.py
 
 ## 📁 Project structure
 
-```
+```text
 AI-Telegram-News-Bot/
 ├── scrapers/               # Source aggregators
 ├── services/               # Summarization + comparison
@@ -189,3 +189,4 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 MIT License — see [LICENSE](LICENSE).
+
