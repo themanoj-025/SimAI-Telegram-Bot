@@ -1,158 +1,86 @@
-# ──────────────────────────────────────────────
-#  SECRETS & ENVIRONMENT  (NEVER COMMIT THESE)
-# ──────────────────────────────────────────────
+# .gitignore — AI-Telegram-News-Bot (Python / Telegram / Scrapers)
+# Generated under Repo Hygiene Protocol v3.0
+
+# --- Environment & Secrets ---
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+secrets.*
+.act-secrets
 
-# ──────────────────────────────────────────────
-#  PYTHON
-# ──────────────────────────────────────────────
+# --- Operating System ---
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*~
+*.swp
+*.swo
+*.bak
+
+# --- Editors / IDEs ---
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+*.sublime-project
+*.sublime-workspace
+
+# --- Python ---
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.pyw
-*.pyz
-*.egg
+*.py[cod]
+*$py.class
 *.egg-info/
+.eggs/
 dist/
 build/
-.eggs/
 *.so
-
-# ──────────────────────────────────────────────
-#  VIRTUAL ENVIRONMENTS
-# ──────────────────────────────────────────────
 .venv/
 venv/
 env/
 ENV/
 .conda/
 .sixth/
-
-# ──────────────────────────────────────────────
-#  DATABASE / CACHE  (regenerated at runtime)
-# ──────────────────────────────────────────────
-*.db
-*.sqlite
-*.sqlite3
-
-# ──────────────────────────────────────────────
-#  LOG FILES
-# ──────────────────────────────────────────────
-*.log
-logs/
-ai_daily_bot.log
-bot.log
-
-# ──────────────────────────────────────────────
-#  TEST ARTIFACTS & SCRATCH
-# ──────────────────────────────────────────────
-test_results.txt
-verification_output.txt
-verification_output_v2.txt
-
-# ──────────────────────────────────────────────
-#  IDE & EDITOR
-# ──────────────────────────────────────────────
-.vscode/*
-!.vscode/settings.json
-.idea/
-*.swp
-*.swo
-*.sublime-project
-*.sublime-workspace
-
-# ──────────────────────────────────────────────
-#  OS FILES
-# ──────────────────────────────────────────────
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# ──────────────────────────────────────────────
-#  NODE (not used here but safe to include)
-# ──────────────────────────────────────────────
-node_modules/
-npm-debug.log*
-yarn-error.log*
-
-# ──────────────────────────────────────────────
-#  TEMPORARY FILES
-# ──────────────────────────────────────────────
-*.tmp
-*.temp
-.cache/
-
-.gemini/
-.cursorrules
-
-CLAUDE.md
-
-# Test coverage artifacts
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
 .coverage
 .coverage.*
 htmlcov/
 coverage.xml
 
-# ── Portfolio-standard ignores (sweep 2026-09) ──────────────
-radar_balance.txt
+# --- Database & Cache (regenerated at runtime) ---
+*.db
 *.db-shm
 *.db-wal
+*.sqlite
+*.sqlite3
+bot_cache.db
 
+# --- Logs & Runtime Output ---
+*.log
+logs/
+ai_daily_bot.log
+bot.log
 
-# THEMANoj-025 — AI provenance & transparency negation block
-# These files MUST remain tracked and visible. Nothing below may be
-# shadowed by a preceding ignore rule — keep this block LAST in file.
-!.gitignore
-!.gitattributes
-!.editorconfig
-!.gitmessage
+# --- Test Artifacts & Scratch ---
+test_results.txt
+verification_output.txt
+verification_output_v2.txt
+radar_balance.txt
+.cache/
+.tmp-audit/
+.restructure-audit/
 
-# ─── AI provenance & transparency negation block (T2 저장소 전역 rules에만 의거한 2차 보호) ──
-# 아래 T2 managed block(/docs/ai/)이 docs/ai/ 전체를 ignore하므로,
-# 이 검증용 커밋이 파탄나지 않도록 해당 파일은 force-visible 상태로 남긴다. (§5A.12)
-!.gitignore
-!.gitattributes
-!.editorconfig
-!.gitmessage
-!docs/ai/PROMPTS.md
-!docs/ai/
-!docs/ai/PROVENANCE.md
-!docs/ai/transcripts/README.md
-
-# ──────────────────────────────────────────────────────────────
-#  AI / LLM ARTIFACTS (prove this project uses NO LLM/AI)
-# ──────────────────────────────────────────────────────────────
-# AI-assistant tooling config (not part of the app)
-AGENTS.md
-AGENTS_FIX.md
-.cursorrules
-.gemini/
-.act-secrets
-ai-provenance.json
-AI_DISCLOSURE.md
-ai-disclosure-check.yml
-
-# AI / Assistant tooling & artifacts
-.claude/
-CLAUDE.md
-.cursor/
-.cursorrules
-.windsurf/
-.windsurfrules
-.cline/
-.clinerules
-.continue/
-.roo/
-.gemini/
-.copilot/
-copilot-instructions.md
-.github/copilot-instructions.md
-AGENTS.md
-AGENTS_FIX.md
-.purge-reports/
-.cleanup-audit/
-ai-provenance.json
-AI_DISCLOSURE.md
+# --- Node / Frontend (if any tools run) ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
