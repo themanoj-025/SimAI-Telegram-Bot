@@ -1,7 +1,7 @@
 import asyncio
+import sys
 import threading
-from collections.abc import Callable
-from collections.abc import Coroutine
+from collections.abc import Callable, Coroutine
 from typing import Any
 
 from telegram import BotCommand, Update
@@ -20,7 +20,7 @@ from services.report_generator import ReportGenerator
 from services.scheduler import SchedulerService
 from services.summarizer import Summarizer
 from utils.logger import setup_logger
-from utils.telegram_utils import _msg, send_split_message
+from utils.telegram_utils import _msg, send_split_message, send_split_message_to_chat
 
 logger = setup_logger(__name__)
 report_generator = ReportGenerator()
@@ -29,16 +29,32 @@ summarizer = Summarizer()
 # Backlog of pending long-running work (category reports / summaries).
 _QUEUE: list[dict[str, Any]] = []
 _QUEUE_LOCK = threading.Lock()
+_QUEUE_TASKS: set[asyncio.Task[Any]] = set()
 
 # Rate-limit: cooldown (s) per chat_id for broadcast / long-report replies.
 BROADCAST_COOLDOWN_SECONDS = 300.0  # 5 minutes between auto-broadcasts per chat
 _SENT_AT: dict[str, float] = {}
 
 
+def _get_command_query(
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE | None = None,
+    command_name: str = "",
+) -> str:
+    """Extract argument string from a command invocation."""
+    if context and context.args:
+        return str(" ".join(str(x) for x in context.args))
+    if update.message and update.message.text:
+        parts = update.message.text.split(maxsplit=1)
+        if len(parts) > 1:
+            return str(parts[1])
+    return ""
+
+
 def _queue_command(
     handler: Callable[..., Coroutine[Any, Any, None]],
     update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
+    context: ContextTypes.DEFAULT_TYPE | None = None,
     *args: Any,
 ) -> None:
     """Fire-and-forget a long-running command: return a pending notice now,
@@ -56,7 +72,9 @@ def _queue_command(
 
     # Kick off the worker on the bot's event loop.
     loop = asyncio.get_running_loop()
-    asyncio.create_task(_process_queue(loop))
+    task = asyncio.create_task(_process_queue(loop))
+    _QUEUE_TASKS.add(task)
+    task.add_done_callback(_QUEUE_TASKS.discard)
 
 
 async def _process_queue(loop: asyncio.AbstractEventLoop) -> None:
@@ -70,7 +88,22 @@ async def _process_queue(loop: asyncio.AbstractEventLoop) -> None:
 
         try:
             await item["handler"](item["update"], item["context"], *item.get("args", []))
-        except Exception:  # noqa: BLE001
+        except Exception:
+            logger.exception("Pending command worker failed")
+
+
+async def drain_queue() -> None:
+    """Drain the pending-work backlog (used for testing and teardown)."""
+    global _QUEUE
+    while True:
+        with _QUEUE_LOCK:
+            if not _QUEUE:
+                break
+            item = _QUEUE.pop(0)
+
+        try:
+            await item["handler"](item["update"], item["context"], *item.get("args", []))
+        except Exception:
             logger.exception("Pending command worker failed")
 
 
@@ -98,11 +131,9 @@ async def _run_broadcast(chat_id: str) -> None:
         logger.error(f"Auto-broadcast error: {e}")
 
 
-async def _send_or_queued(
-    update: Update, text: str | None, parse_mode: str = "Markdown"
-) -> None:
+async def _send_or_queued(update: Update, text: str | None, parse_mode: str = "Markdown") -> None:
     """Reply directly when the queue is empty; otherwise queue it for later."""
-    async with _QUEUE_LOCK:
+    with _QUEUE_LOCK:
         is_empty = not _QUEUE
     if is_empty:
         await send_split_message(update, text, parse_mode)
@@ -110,21 +141,27 @@ async def _send_or_queued(
         _queue_command(generic_reply_handler, update, None)
 
 
-async def generic_reply_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def generic_reply_handler(
+    update: Update, context: ContextTypes.DEFAULT_TYPE | None = None
+) -> None:
     """Worker callback that applies the queued reply to the original update."""
     if update.message is not None and update.message.reply_text is not None:
-        await update.message.reply_text(
-            "Your request is being prepared (this may take a moment)."
-        )
+        await update.message.reply_text("Your request is being prepared (this may take a moment).")
 
 
-def make_broadcast_callback(app: Application, chat_id: str, loop_holder: list) -> Callable[[], None]:
+def make_broadcast_callback(
+    app: Application, chat_id: str, loop_holder: list
+) -> Callable[[], None]:
     """Create a scheduler callback that re-queues the broadcast so the heavy
     work (scrape + summarize + send) does not run on the bot's event loop at all."""
 
     def callback() -> None:
         logger.info("2-hour auto-refresh triggered - generating a fresh AI Daily Brief...")
-        loop = loop_holder[0] if loop_holder and loop_holder[0] is not None else asyncio.get_event_loop()
+        loop = (
+            loop_holder[0]
+            if loop_holder and loop_holder[0] is not None
+            else asyncio.get_event_loop()
+        )
         if loop is None:
             logger.warning("Auto-broadcast skipped because the event loop is not ready yet.")
             return
@@ -223,9 +260,7 @@ async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
         await _msg(update).reply_text("Error generating roadmap. Try again.")
 
 
-async def leaderboard_command(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> None:
+async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     filter_term = _get_command_query(update, context, "leaderboard")
     await _msg(update).reply_text("Fetching AI model leaderboard...")
     try:
@@ -236,9 +271,7 @@ async def leaderboard_command(
         await _msg(update).reply_text("Error fetching leaderboard. Try again.")
 
 
-async def handle_message(
-    update: Update, context: ContextTypes.DEFAULT_TYPE
-) -> None:
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not update.message or not update.message.text:
         return
 
@@ -276,7 +309,11 @@ def _make_broadcast_callback(
 
     def callback() -> None:
         logger.info("2-hour auto-refresh triggered - generating a fresh AI Daily Brief...")
-        loop = loop_holder[0] if loop_holder and loop_holder[0] is not None else asyncio.get_event_loop()
+        loop = (
+            loop_holder[0]
+            if loop_holder and loop_holder[0] is not None
+            else asyncio.get_event_loop()
+        )
         if loop is None:
             logger.warning("Auto-broadcast skipped because the event loop is not ready yet.")
             return
@@ -291,7 +328,7 @@ def _make_broadcast_callback(
     return callback
 
 
-async def main() -> None:
+def main() -> None:
     config = Config()
     logger.info("Starting bot...")
 

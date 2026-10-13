@@ -41,7 +41,7 @@ async def send_split_message(
 ) -> None:
     """
     Splits a long message into multiple parts if it exceeds Telegram's limit (4096 characters).
-    Adds a hard max-length check and a warning log when content is silently cut.
+    Adds a hard max-length check and a warning log when content exceeds MAX_MESSAGE_LENGTH.
     """
     if not text:
         return
@@ -53,10 +53,16 @@ async def send_split_message(
             len(text),
             MAX_MESSAGE_LENGTH,
         )
-        text = text[:MAX_MESSAGE_LENGTH]
 
     if len(text) <= MAX_MESSAGE_LENGTH:
-        await _msg(update).reply_text(text, parse_mode=parse_mode)
+        try:
+            await _msg(update).reply_text(text, parse_mode=parse_mode)
+        except (telegram.error.TelegramError, OSError) as e:
+            logger.error(f"Error sending message: {e}")
+            try:
+                await _msg(update).reply_text(text)
+            except (telegram.error.TelegramError, OSError) as e2:
+                logger.error(f"Fallback also failed: {e2}")
         return
 
     # Split by double newline if possible to preserve structure
@@ -75,12 +81,20 @@ async def send_split_message(
             if current_part:
                 parts.append(current_part)
 
-            # If a single section is too long, split it by lines
+            # If a single section is too long, split it by lines or chunks
             if len(section) > MAX_MESSAGE_LENGTH:
                 lines = section.split("\n")
                 temp_part = ""
                 for line in lines:
-                    if len(temp_part) + len(line) + 1 <= MAX_MESSAGE_LENGTH:
+                    if len(line) > MAX_MESSAGE_LENGTH:
+                        if temp_part:
+                            parts.append(temp_part)
+                            temp_part = ""
+                        for j in range(0, len(line), MAX_MESSAGE_LENGTH):
+                            chunk = line[j : j + MAX_MESSAGE_LENGTH]
+                            if chunk:
+                                parts.append(chunk)
+                    elif len(temp_part) + len(line) + 1 <= MAX_MESSAGE_LENGTH:
                         if temp_part:
                             temp_part += "\n" + line
                         else:
@@ -96,14 +110,6 @@ async def send_split_message(
         parts.append(current_part)
 
     for i, part in enumerate(parts):
-        if len(part) < MIN_CHUNK_LENGTH:
-            logger.warning(
-                "Dropping sub-chunk %d (%.0f chars): too small to be useful",
-                i,
-                len(part),
-            )
-            continue
-
         try:
             await _msg(update).reply_text(part, parse_mode=parse_mode)
             if i < len(parts) - 1:
@@ -203,8 +209,11 @@ async def _send_message_to_chat(
     """Send a single message to a chat id via the bot."""
     from telegram import Bot
 
-    bot = Bot.get_current()
-    if bot is None:
-        logger.error("Cannot send to chat %s: no bot available", chat_id)
+    from config.config import Config
+
+    token = getattr(Config, "TELEGRAM_BOT_TOKEN", None)
+    if not token:
+        logger.error("Cannot send to chat %s: no bot token available", chat_id)
         return
+    bot = Bot(token=token)
     await bot.send_message(chat_id=chat_id, text=text, parse_mode=parse_mode)

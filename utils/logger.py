@@ -70,8 +70,6 @@ class ReadableFormatter(logging.Formatter):
         return f"{prefix}{asctime} - {record.name} - {record.levelname} - {record.getMessage()}"
 
 
-
-
 def _ensure_utf8_console() -> None:
     for stream_name in ("stdout", "stderr"):
         stream = getattr(sys, stream_name, None)
