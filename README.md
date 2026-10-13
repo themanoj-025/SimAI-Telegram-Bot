@@ -120,7 +120,7 @@ python main.py
 
 ## 📁 Project structure
 
-```
+```text
 AI-Telegram-News-Bot/
 ├── scrapers/               # Source aggregators
 ├── services/               # Summarization + comparison
