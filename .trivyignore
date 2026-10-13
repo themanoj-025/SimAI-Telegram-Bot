@@ -17,3 +17,7 @@ CVE-2025-47273
 # not reachable: msgpack exists only as a base-image system package and
 # is not imported by the bot or any of its runtime dependencies.
 GHSA-6v7p-g79w-8964
+
+# CVE-2026-97687 & CVE-2026-97689: base-image system copy under /usr/lib/python3/dist-packages
+CVE-2026-97687
+CVE-2026-97689

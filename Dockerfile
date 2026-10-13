@@ -28,7 +28,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # tini: proper PID-1 signal handling so SIGTERM reaches the bot process
 RUN apt-get update && apt-get install -y --no-install-recommends \
         tini \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /usr/lib/python3/dist-packages/urllib3*
 
 WORKDIR /app
 
