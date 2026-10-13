@@ -1,10 +1,9 @@
 import asyncio
-
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from utils.telegram_utils import _msg, MAX_MESSAGE_LENGTH, send_split_message
+from utils.telegram_utils import MAX_MESSAGE_LENGTH, send_split_message
 
 
 @pytest.fixture

@@ -1,4 +1,5 @@
 import asyncio
+from typing import Any
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -11,7 +12,7 @@ logger = setup_logger(__name__)
 
 
 class SchedulerService:
-    def __init__(self, refresh_callback, daily_report_callback=None) -> None:
+    def __init__(self, refresh_callback: Any, daily_report_callback: Any = None) -> None:
         self.refresh_callback = refresh_callback
         self.daily_report_callback = daily_report_callback
         self.config = Config()
@@ -69,19 +70,23 @@ class SchedulerService:
             asyncio.run(_worker())
 
     @staticmethod
-    def _unwrap(callback: object) -> object:
-        """Follow .func/.__wrapped__/lambda attributes so the true target is run."""
-        target: object = callback
+    def _unwrap(callback: Any) -> Any:
+        """Follow .func/.__wrapped__ attributes so the true target is run."""
+        import functools
+        from unittest.mock import NonCallableMock
+
+        target: Any = callback
         depth = 0
         while depth < 8:
-            if not callable(target):
+            if isinstance(target, NonCallableMock):
                 break
-            if hasattr(target, "__wrapped__"):
-                target = target.__wrapped__
+            if isinstance(target, functools.partial):
+                target = target.func
                 depth += 1
                 continue
-            if hasattr(target, "func"):
-                target = target.func
+            wrapped = getattr(target, "__wrapped__", None)
+            if wrapped is not None and wrapped is not target:
+                target = wrapped
                 depth += 1
                 continue
             break

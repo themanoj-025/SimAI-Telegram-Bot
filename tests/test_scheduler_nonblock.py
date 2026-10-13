@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from services.scheduler import SchedulerService
 
 
@@ -32,9 +30,7 @@ class TestSchedulerNonBlock:
     def test_run_refresh_now_no_running_loop_falls_back(self, mock_to_thread):
         """When no event loop is running, asyncio.run() is used instead."""
         mock_get_loop = MagicMock(side_effect=RuntimeError("no loop"))
-        with patch("asyncio.get_running_loop", mock_get_loop), patch(
-            "asyncio.run"
-        ) as mock_run:
+        with patch("asyncio.get_running_loop", mock_get_loop), patch("asyncio.run") as mock_run:
             refresh_cb = MagicMock()
             svc = SchedulerService(refresh_cb)
             svc.run_refresh_now()

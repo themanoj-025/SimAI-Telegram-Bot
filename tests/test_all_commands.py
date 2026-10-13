@@ -64,6 +64,7 @@ async def test_report_commands() -> None:
                     await run_bot.daily_command(update, context)
                 else:
                     await run_bot.generic_command(update, context, expected_category)
+                await run_bot.drain_queue()
                 mock_report.assert_any_await(expected_category)
             assert mock_send.await_count == len(categories)
 
@@ -86,6 +87,7 @@ async def test_summary_command() -> None:
                 new=AsyncMock(return_value="Short summary"),
             ):
                 await run_bot.summary_command(update, context)
+                await run_bot.drain_queue()
                 assert mock_send.await_count == 1
 
 
