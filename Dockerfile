@@ -47,7 +47,8 @@ RUN pip install --upgrade pip && \
     # 70.3.0, msgpack 1.1.2) are apt-managed and handled via .trivyignore.
     pip install --no-cache-dir --upgrade \
         "setuptools>=83.0.0" \
-        "wheel>=0.46.2"
+        "wheel>=0.46.2" \
+        "urllib3>=2.8.0"
 
 # ── Runtime stage ──────────────────────────────────────────────────────
 FROM deps AS prod
