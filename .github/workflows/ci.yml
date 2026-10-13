@@ -214,6 +214,7 @@ jobs:
           exit-code: "1"
           ignore-unfixed: true
           severity: CRITICAL,HIGH
+          trivyignores: .trivyignore
 
   typecheck:
     timeout-minutes: 15
