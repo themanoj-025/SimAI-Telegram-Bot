@@ -5,6 +5,12 @@ from config.config import Config
 
 def get_chat_id() -> None:
     bot_token = Config.TELEGRAM_BOT_TOKEN
+    if not bot_token:
+        print(
+            "Error: TELEGRAM_BOT_TOKEN is not configured. "
+            "Please set it in your environment or .env file before running this script."
+        )
+        return
 
     url = f"https://api.telegram.org/bot{bot_token}/getUpdates"
 
