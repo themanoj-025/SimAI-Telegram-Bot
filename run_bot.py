@@ -1,4 +1,5 @@
 import asyncio
+import os
 import sys
 import threading
 from collections.abc import Callable, Coroutine
@@ -30,10 +31,30 @@ summarizer = Summarizer()
 _QUEUE: list[dict[str, Any]] = []
 _QUEUE_LOCK = threading.Lock()
 _QUEUE_TASKS: set[asyncio.Task[Any]] = set()
+MAX_QUEUE_SIZE = 100  # Guard against memory exhaustion / command flooding
 
 # Rate-limit: cooldown (s) per chat_id for broadcast / long-report replies.
 BROADCAST_COOLDOWN_SECONDS = 300.0  # 5 minutes between auto-broadcasts per chat
 _SENT_AT: dict[str, float] = {}
+
+# Per-user interactive command rate limiting
+USER_COMMAND_COOLDOWN_SECONDS = float(os.getenv("USER_COMMAND_COOLDOWN_SECONDS", "0.0"))
+_LAST_USER_COMMAND: dict[str, float] = {}
+
+
+def _is_user_throttled(chat_id: str | int | None) -> bool:
+    """Return True if the user command should be throttled (SEC-002)."""
+    if not chat_id or USER_COMMAND_COOLDOWN_SECONDS <= 0:
+        return False
+    now = asyncio.get_event_loop().time()
+    key = str(chat_id)
+    last = _LAST_USER_COMMAND.get(key)
+    if last is not None and (now - last) < USER_COMMAND_COOLDOWN_SECONDS:
+        return True
+    if len(_LAST_USER_COMMAND) > 10000:
+        _LAST_USER_COMMAND.clear()
+    _LAST_USER_COMMAND[key] = now
+    return False
 
 
 def _get_command_query(
@@ -56,11 +77,14 @@ def _queue_command(
     update: Update,
     context: ContextTypes.DEFAULT_TYPE | None = None,
     *args: Any,
-) -> None:
+) -> bool:
     """Fire-and-forget a long-running command: return a pending notice now,
     let a background worker finish it and post the result later."""
     global _QUEUE
     with _QUEUE_LOCK:
+        if len(_QUEUE) >= MAX_QUEUE_SIZE:
+            logger.warning("Queue overflow: backlog exceeded MAX_QUEUE_SIZE (%d)", MAX_QUEUE_SIZE)
+            return False
         _QUEUE.append(
             {
                 "handler": handler,
@@ -75,6 +99,7 @@ def _queue_command(
     task = asyncio.create_task(_process_queue(loop))
     _QUEUE_TASKS.add(task)
     task.add_done_callback(_QUEUE_TASKS.discard)
+    return True
 
 
 async def _process_queue(loop: asyncio.AbstractEventLoop) -> None:
@@ -188,8 +213,16 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def generic_command(
     update: Update, context: ContextTypes.DEFAULT_TYPE, category: str
 ) -> None:
+    chat_id = update.effective_chat.id if update.effective_chat else None
+    if _is_user_throttled(chat_id):
+        await _msg(update).reply_text("Please wait a moment before sending another command.")
+        return
+
+    queued = _queue_command(generic_command_worker, update, context, category)
+    if not queued:
+        await _msg(update).reply_text("Server is currently busy. Please try again shortly.")
+        return
     await _msg(update).reply_text("Fetching updates...")
-    _queue_command(generic_command_worker, update, context, category)
 
 
 async def generic_command_worker(
@@ -211,8 +244,16 @@ async def daily_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def summary_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.effective_chat.id if update.effective_chat else None
+    if _is_user_throttled(chat_id):
+        await _msg(update).reply_text("Please wait a moment before sending another command.")
+        return
+
+    queued = _queue_command(summary_command_worker, update, context)
+    if not queued:
+        await _msg(update).reply_text("Server is currently busy. Please try again shortly.")
+        return
     await _msg(update).reply_text("Generating AI summary...")
-    _queue_command(summary_command_worker, update, context)
 
 
 async def summary_command_worker(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -231,6 +272,11 @@ async def summary_command_worker(update: Update, context: ContextTypes.DEFAULT_T
 
 
 async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.effective_chat.id if update.effective_chat else None
+    if _is_user_throttled(chat_id):
+        await _msg(update).reply_text("Please wait a moment before sending another command.")
+        return
+
     args = _get_command_query(update, context, "compare")
     if not args:
         await _msg(update).reply_text(
@@ -250,6 +296,11 @@ async def compare_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.effective_chat.id if update.effective_chat else None
+    if _is_user_throttled(chat_id):
+        await _msg(update).reply_text("Please wait a moment before sending another command.")
+        return
+
     role = _get_command_query(update, context, "roadmap") or "ai engineer"
     await _msg(update).reply_text("Building your AI roadmap...")
     try:
@@ -261,6 +312,11 @@ async def roadmap_command(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 
 async def leaderboard_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    chat_id = update.effective_chat.id if update.effective_chat else None
+    if _is_user_throttled(chat_id):
+        await _msg(update).reply_text("Please wait a moment before sending another command.")
+        return
+
     filter_term = _get_command_query(update, context, "leaderboard")
     await _msg(update).reply_text("Fetching AI model leaderboard...")
     try:
