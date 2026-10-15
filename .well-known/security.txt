@@ -1,0 +1,5 @@
+Contact: https://github.com/themanoj-025/AI-Telegram-News-Bot/security/advisories
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en
+Policy: https://github.com/themanoj-025/AI-Telegram-News-Bot/blob/main/SECURITY.md
+Canonical: https://github.com/themanoj-025/AI-Telegram-News-Bot/blob/main/.well-known/security.txt
