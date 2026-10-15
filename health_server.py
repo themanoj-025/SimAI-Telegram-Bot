@@ -12,6 +12,7 @@ Rate limiting via slowapi on /api/* endpoints (future expansion).
 from __future__ import annotations
 
 import logging
+import os
 import threading
 import time
 from typing import Any, cast
@@ -33,6 +34,9 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+# Docs and API schema are disabled in production by default to prevent reconnaissance (SEC-004)
+ENABLE_DOCS = os.getenv("ENABLE_DOCS", "false").lower() in ("true", "1", "yes")
+
 # ---------------------------------------------------------------------------
 # Rate limiter
 # ---------------------------------------------------------------------------
@@ -45,8 +49,9 @@ app = FastAPI(
     title="AI Telegram News Bot — Health API",
     description="Health checks, readiness probes, and operational status for the AI Daily Intelligence Bot.",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    docs_url="/docs" if ENABLE_DOCS else None,
+    redoc_url="/redoc" if ENABLE_DOCS else None,
+    openapi_url="/openapi.json" if ENABLE_DOCS else None,
     openapi_tags=[
         {
             "name": "health",
@@ -104,7 +109,16 @@ async def add_security_headers(request, call_next) -> Any:
     response.headers["Permissions-Policy"] = (
         "camera=(), microphone=(), geolocation=(), interest-cohort=()"
     )
-    response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none';"
+    if ENABLE_DOCS and request.url.path in ("/docs", "/redoc", "/openapi.json"):
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+            "img-src 'self' data: https://fastapi.tiangolo.com; "
+            "frame-ancestors 'none';"
+        )
+    else:
+        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none';"
     return response
 
 
@@ -169,14 +183,16 @@ async def metrics() -> PlainTextResponse:
 @app.get("/", tags=["info"], summary="Service info")
 async def root() -> dict[str, Any]:
     """Service information and links."""
-    return {
+    data = {
         "service": "AI Telegram News Bot",
         "version": "1.0.0",
-        "docs": "/docs",
         "health": "/health",
         "readiness": "/health/ready",
         "metrics": "/metrics",
     }
+    if ENABLE_DOCS:
+        data["docs"] = "/docs"
+    return data
 
 
 # ---------------------------------------------------------------------------

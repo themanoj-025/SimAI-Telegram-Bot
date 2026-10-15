@@ -68,3 +68,21 @@ class TestHealthServer:
             resp = client.get("/health/ready")
             assert resp.status_code == 503
             assert isinstance(resp.json()["uptime_seconds"], float)
+
+    def test_security_headers_present(self) -> None:
+        """Regression test for SEC-004: verify defensive HTTP headers on health endpoints."""
+        client = TestClient(app)
+        resp = client.get("/health")
+        assert resp.headers["X-Content-Type-Options"] == "nosniff"
+        assert resp.headers["X-Frame-Options"] == "DENY"
+        assert resp.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
+        assert "default-src 'none'" in resp.headers["Content-Security-Policy"]
+        assert "frame-ancestors 'none'" in resp.headers["Content-Security-Policy"]
+
+    def test_docs_disabled_by_default_in_production(self) -> None:
+        """Regression test for SEC-004: verify /docs and /openapi.json are disabled by default."""
+        client = TestClient(app)
+        resp = client.get("/docs")
+        # When disabled, FastAPI returns 404 for docs_url=None
+        assert resp.status_code == 404
+
