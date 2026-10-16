@@ -85,4 +85,3 @@ class TestHealthServer:
         resp = client.get("/docs")
         # When disabled, FastAPI returns 404 for docs_url=None
         assert resp.status_code == 404
-
