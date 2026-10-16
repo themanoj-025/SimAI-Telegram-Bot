@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -7,7 +8,7 @@ from telegram.ext import ContextTypes
 import run_bot
 
 
-def make_update(message_text: str = "/summary", chat_id: int = 99999) -> Update:
+def make_update(message_text: str = "/summary", chat_id: int = 99999) -> Any:
     update = MagicMock(spec=Update)
     update.message = AsyncMock(spec=Message)
     update.message.text = message_text
