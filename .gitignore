@@ -1,102 +1,179 @@
-# ──────────────────────────────────────────────
-#  SECRETS & ENVIRONMENT  (NEVER COMMIT THESE)
-# ──────────────────────────────────────────────
+# ==============================================================================
+# AI-Telegram-News-Bot - Security & Production .gitignore
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. SECRETS & ENVIRONMENT VARIABLES (CRITICAL)
+# ------------------------------------------------------------------------------
 .env
 .env.*
+*.env
+.env.local
+.env.development
+.env.test
+.env.staging
+.env.production
 !.env.example
+!.env.template
+!.env.sample
 
-# ──────────────────────────────────────────────
-#  PYTHON
-# ──────────────────────────────────────────────
+# Private keys, certificates & credentials
+*.pem
+*.key
+*.keystore
+*.jks
+*.p12
+*.pfx
+*.pkcs12
+*.cer
+*.crt
+*.der
+*.id_rsa
+id_rsa*
+id_ed25519*
+id_ecdsa*
+id_dsa*
+
+# Cloud & service credentials
+credentials.json
+client_secret*.json
+service-account*.json
+service_account*.json
+serviceAccountKey*.json
+google-services.json
+GoogleService-Info.plist
+.aws/
+.azure/
+.gcp/
+gcloud/
+.act-secrets
+*.publishsettings
+
+# Authentication tokens & configs
+.netrc
+.pypirc
+.npmrc
+*token*.json
+token.pickle
+auth*.json
+
+# ------------------------------------------------------------------------------
+# 2. PYTHON RUNTIME, BUILDS & VIRTUAL ENVIRONMENTS
+# ------------------------------------------------------------------------------
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.pyw
-*.pyz
-*.egg
-*.egg-info/
-dist/
-build/
-.eggs/
+*.py[cod]
+*$py.class
 *.so
+.Python
 
-# ──────────────────────────────────────────────
-#  VIRTUAL ENVIRONMENTS
-# ──────────────────────────────────────────────
+# Virtual environments
 .venv/
 venv/
 env/
 ENV/
 .conda/
 .sixth/
+env.bak/
+venv.bak/
 
-# ──────────────────────────────────────────────
-#  DATABASE / CACHE  (regenerated at runtime)
-# ──────────────────────────────────────────────
+# Packaging & distribution
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ------------------------------------------------------------------------------
+# 3. DATABASE & RUNTIME CACHES
+# ------------------------------------------------------------------------------
 *.db
 *.sqlite
 *.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
 
-# ──────────────────────────────────────────────
-#  LOG FILES
-# ──────────────────────────────────────────────
+# ------------------------------------------------------------------------------
+# 4. LOGS & RUNTIME OUTPUT
+# ------------------------------------------------------------------------------
 *.log
 logs/
 ai_daily_bot.log
 bot.log
+*.dump
+*.stackdump
 
-# ──────────────────────────────────────────────
-#  TEST ARTIFACTS & SCRATCH
-# ──────────────────────────────────────────────
-test_results.txt
-verification_output.txt
-verification_output_v2.txt
-
-# ──────────────────────────────────────────────
-#  IDE & EDITOR
-# ──────────────────────────────────────────────
-.vscode/*
-!.vscode/settings.json
-.idea/
-*.swp
-*.swo
-*.sublime-project
-*.sublime-workspace
-
-# ──────────────────────────────────────────────
-#  OS FILES
-# ──────────────────────────────────────────────
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# ──────────────────────────────────────────────
-#  NODE (not used here but safe to include)
-# ──────────────────────────────────────────────
-node_modules/
-npm-debug.log*
-yarn-error.log*
-
-# ──────────────────────────────────────────────
-#  TEMPORARY FILES
-# ──────────────────────────────────────────────
-*.tmp
-*.temp
+# ------------------------------------------------------------------------------
+# 5. TESTING, COVERAGE & QUALITY TOOLS
+# ------------------------------------------------------------------------------
 .cache/
-
-.gemini/
-.cursorrules
-
-CLAUDE.md
-
-# Test coverage artifacts
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 .coverage
 .coverage.*
 htmlcov/
 coverage.xml
-
-# ── Portfolio-standard ignores (sweep 2026-09) ──────────────
+test_results.txt
+verification_output.txt
+verification_output_v2.txt
 radar_balance.txt
-*.db-shm
-*.db-wal
+
+# ------------------------------------------------------------------------------
+# 6. IDE, EDITORS & LOCAL TOOLING
+# ------------------------------------------------------------------------------
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.vscode/*.local.*
+.vscode/mcp.json
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# AI / assistant workspace state
+.gemini/
+.cursorrules
+.claude/
+.cursor/
+.windsurf/
+.agents/
+CLAUDE.md
+
+# ------------------------------------------------------------------------------
+# 7. OS ARTIFACTS & TEMPORARY FILES
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.temp
+*.bak
+
+# Node (safe fallback)
+node_modules/
+npm-debug.log*
+yarn-error.log*

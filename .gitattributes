@@ -1,5 +1,5 @@
 # Auto-detect text files and normalize line endings
-* text=auto
+* text=auto eol=lf
 
 # Python source
 *.py text diff=python
@@ -15,13 +15,20 @@
 *.json text
 *.cfg text
 *.ini text
-*.env text
-*.env.example text
+
+# Security: prevent secret files from appearing in diffs if accidentally created
+*.env -diff
+*.pem -diff
+*.key -diff
+*.cert -diff
+*.p12 -diff
+*.pfx -diff
+*.pkcs12 -diff
 
 # Shell / batch scripts
 *.sh text eol=lf
 *.bat text eol=crlf
-*.ps1 text
+*.ps1 text eol=crlf
 
 # Web
 *.html text diff=html
@@ -30,9 +37,11 @@
 Procfile text
 Dockerfile text
 Dockerfile.* text
+.dockerignore text
 
 # Requirements
 requirements.txt text
+requirements*.txt text
 runtime.txt text
 
 # Binary files - don't modify
@@ -42,3 +51,10 @@ runtime.txt text
 *.gif binary
 *.ico binary
 *.zip binary
+*.gz binary
+*.tar binary
+*.7z binary
+*.pkl binary
+*.sqlite binary
+*.sqlite3 binary
+*.db binary
