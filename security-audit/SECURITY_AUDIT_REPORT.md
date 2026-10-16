@@ -27,7 +27,7 @@ The `AI-Telegram-News-Bot` repository has undergone a comprehensive Master Ultra
 
 ## 3. Architecture and Attack-Surface Summary
 
-The application integrates an asynchronous Telegram bot polling client (`run_bot.py`), an APScheduler recurring job service (`services/scheduler.py`), an LLM summarizer using Google Gemini 2.0 (`services/summarizer.py`), an asynchronous scraper engine fetching over 40 RSS feeds and web pages (`scrapers/*.py`), and a background FastAPI health server (`health_server.py`) exposing liveness/readiness probes on port 8080. SQLite (`bot_cache.db`) provides local persistent caching. Untrusted data enters via Telegram user commands and external RSS feed content. 
+The application integrates an asynchronous Telegram bot polling client (`run_bot.py`), an APScheduler recurring job service (`services/scheduler.py`), an LLM summarizer using Google Gemini 2.0 (`services/summarizer.py`), an asynchronous scraper engine fetching over 40 RSS feeds and web pages (`scrapers/*.py`), and a background FastAPI health server (`health_server.py`) exposing liveness/readiness probes on port 8080. SQLite (`bot_cache.db`) provides local persistent caching. Untrusted data enters via Telegram user commands and external RSS feed content.
 
 Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous sink inventories are documented in [01-attack-surface.md](file:///f:/GITHUB/AI-Telegram-News-Bot/security-audit/01-attack-surface.md).
 

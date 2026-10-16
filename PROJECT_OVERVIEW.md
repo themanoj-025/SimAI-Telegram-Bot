@@ -591,55 +591,55 @@ Deployable via Docker container running Uvicorn health server and background bot
 
 ## <a id="exam"></a>§EXAM — Cold-Reader Verification Exam (25 Questions)
 
-1. **Q: What is the primary functional objective of the AI Telegram News Bot?**  
+1. **Q: What is the primary functional objective of the AI Telegram News Bot?**
    *A:* Asynchronously scrape tech/AI news, generate LLM summaries via Gemini, and broadcast them to Telegram. Reference: [§TLDR](#tldr).
-2. **Q: What LLM provider is utilized for news summarization?**  
+2. **Q: What LLM provider is utilized for news summarization?**
    *A:* Google Gemini (`google-generativeai`). Reference: [`services/summarizer.py`](services/summarizer.py).
-3. **Q: What is the maximum character limit enforced by the message length guard?**  
+3. **Q: What is the maximum character limit enforced by the message length guard?**
    *A:* 4,096 characters (Telegram message ceiling). Reference: [`utils/message_length_guard.py`](utils/message_length_guard.py).
-4. **Q: What library coordinates background periodic scraping and publishing?**  
+4. **Q: What library coordinates background periodic scraping and publishing?**
    *A:* APScheduler. Reference: [`services/scheduler.py`](services/scheduler.py).
-5. **Q: How many total tracked files exist in the repository?**  
+5. **Q: How many total tracked files exist in the repository?**
    *A:* 140 files. Reference: [§META](#meta).
-6. **Q: What total lines of code exist across the codebase?**  
+6. **Q: What total lines of code exist across the codebase?**
    *A:* 11,158 lines of code. Reference: [§META](#meta).
-7. **Q: How many automated tests are collected in the test suite?**  
+7. **Q: How many automated tests are collected in the test suite?**
    *A:* 143 tests across 23 test files. Reference: [§TEST-CATALOG](#test-catalog).
-8. **Q: What git commit hash was verified for this documentation?**  
+8. **Q: What git commit hash was verified for this documentation?**
    *A:* `2539487` (`2539487f77e0df760cb3f6d45f458b24f3c4e998`). Reference: [§META](#meta).
-9. **Q: What git tree hash represents the verified repository state?**  
+9. **Q: What git tree hash represents the verified repository state?**
    *A:* `e5e30fac05dcd2b4b7dceee43498f49a169a106a`. Reference: [§META](#meta).
-10. **Q: What open-source license governs the repository?**  
+10. **Q: What open-source license governs the repository?**
     *A:* MIT License. Reference: [`LICENSE`](LICENSE).
-11. **Q: What fallback mechanism exists if external scrapers fail or time out?**  
+11. **Q: What fallback mechanism exists if external scrapers fail or time out?**
     *A:* Pre-packaged fallback news items in `scrapers/fallback_data.py`. Reference: [§RESILIENCE](#resilience).
-12. **Q: What component prevents duplicate stories from being broadcast twice?**  
+12. **Q: What component prevents duplicate stories from being broadcast twice?**
     *A:* In-memory hash cache in `utils/cache_manager.py`. Reference: [§WHAT](#what).
-13. **Q: What port does the internal health check server listen on by default?**  
+13. **Q: What port does the internal health check server listen on by default?**
     *A:* 8080 (`HEALTH_PORT`). Reference: [§ENV](#env).
-14. **Q: What Python HTTP client powers the asynchronous scrapers?**  
+14. **Q: What Python HTTP client powers the asynchronous scrapers?**
     *A:* `httpx`. Reference: [`scrapers/async_base_scraper.py`](scrapers/async_base_scraper.py).
-15. **Q: What interactive command triggers an immediate manual news harvest?**  
+15. **Q: What interactive command triggers an immediate manual news harvest?**
     *A:* `/news`. Reference: [§API](#api).
-16. **Q: Where are environment variables defined and loaded?**  
+16. **Q: Where are environment variables defined and loaded?**
     *A:* In `.env` via `config/__init__.py`. Reference: [§ENV](#env).
-17. **Q: What Python runtime requirement is declared?**  
+17. **Q: What Python runtime requirement is declared?**
     *A:* Python >= 3.10. Reference: [`pyproject.toml`](pyproject.toml).
-18. **Q: What script tests scraping adapters independently?**  
+18. **Q: What script tests scraping adapters independently?**
     *A:* `scripts/verify_async_scrapers.py`. Reference: [`scripts/verify_async_scrapers.py`](scripts/verify_async_scrapers.py).
-19. **Q: What script discovers a Telegram user or channel chat ID?**  
+19. **Q: What script discovers a Telegram user or channel chat ID?**
     *A:* `get_chat_id.py`. Reference: [`get_chat_id.py`](get_chat_id.py).
-20. **Q: What script lists available Gemini language models?**  
+20. **Q: What script lists available Gemini language models?**
     *A:* `list_models.py`. Reference: [`list_models.py`](list_models.py).
-21. **Q: What linter is configured for code quality?**  
+21. **Q: What linter is configured for code quality?**
     *A:* Ruff. Reference: [`pyproject.toml`](pyproject.toml).
-22. **Q: What is the measured scrape cycle execution duration?**  
+22. **Q: What is the measured scrape cycle execution duration?**
     *A:* 3.2 seconds. Reference: [§PERF](#perf).
-23. **Q: How does the system handle Telegram rate limits (HTTP 429)?**  
+23. **Q: How does the system handle Telegram rate limits (HTTP 429)?**
     *A:* Automatic exponential backoff respecting the `Retry-After` header. Reference: [§RESILIENCE](#resilience).
-24. **Q: What automated workflow scans pull requests for leaked credentials?**  
+24. **Q: What automated workflow scans pull requests for leaked credentials?**
     *A:* `.github/workflows/gitleaks.yml`. Reference: [`.github/workflows/gitleaks.yml`](.github/workflows/gitleaks.yml).
-25. **Q: How many total tracked files are cataloged with 100% manifest coverage in Appendix A?**  
+25. **Q: How many total tracked files are cataloged with 100% manifest coverage in Appendix A?**
     *A:* All 140 tracked files. Reference: [§APP](#app).
 
 ---

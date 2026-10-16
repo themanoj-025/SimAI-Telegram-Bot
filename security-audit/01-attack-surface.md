@@ -1,7 +1,7 @@
 # Phase 1: Reconnaissance and Attack-Surface Mapping
 
-**Target**: `AI-Telegram-News-Bot`  
-**Date**: 2026-10-15  
+**Target**: `AI-Telegram-News-Bot`
+**Date**: 2026-10-15
 **Auditor**: Security Audit Agent (Master Ultra Prompt v2.0)
 
 ---
