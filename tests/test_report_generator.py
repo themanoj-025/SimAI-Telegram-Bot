@@ -85,7 +85,7 @@ class TestReportGeneratorFormat:
         assert "*Test Section*" in result
         assert "Test Article" in result
         assert "Another Article" in result
-        assert "https://example.com" in result
+        assert result.find("https://example.com") != -1
 
     def test_format_section_empty_articles(self) -> None:
 
