@@ -50,7 +50,7 @@ AI-Telegram-News-Bot/
 ├── docker-compose.yml  docker-compose.dev.yml  docker-compose.prod.yml
 ├── Makefile  Procfile  railway.json  render.yaml  runtime.txt
 ├── pyproject.toml  requirements.txt
-├── README.md  PROJECT_OVERVIEW.md  PROJECT_ANALYSIS.md  
+├── README.md  PROJECT_OVERVIEW.md  PROJECT_ANALYSIS.md
 ├── StartBot.ps1  start_bot.bat
 └── .env.example  .gitignore  .dockerignore  .editorconfig  .gitattributes  .vscode/
 ```

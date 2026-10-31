@@ -29,7 +29,7 @@ The `AI-Telegram-News-Bot` repository has undergone a comprehensive Master Ultra
 
 The application integrates an asynchronous Telegram bot polling client (`run_bot.py`), an APScheduler recurring job service (`services/scheduler.py`), an LLM summarizer using Google Gemini 2.0 (`services/summarizer.py`), an asynchronous scraper engine fetching over 40 RSS feeds and web pages (`scrapers/*.py`), and a background FastAPI health server (`health_server.py`) exposing liveness/readiness probes on port 8080. SQLite (`bot_cache.db`) provides local persistent caching. Untrusted data enters via Telegram user commands and external RSS feed content.
 
-Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous sink inventories are documented in [01-attack-surface.md](file:///f:/GITHUB/AI-Telegram-News-Bot/security-audit/01-attack-surface.md).
+Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous sink inventories are documented in [01-attack-surface.md](01-attack-surface.md).
 
 ---
 
@@ -51,7 +51,7 @@ Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous 
 - **Severity**: Medium | **Confidence**: High | **Domain**: 19 - AI / LLM / Agent / Voice Security
 - **CWE**: CWE-1427 | **OWASP**: LLM01:2025
 - **Status**: `fixed` | **Tier**: A
-- **Locations**: [`services/summarizer.py:41-65`](file:///f:/GITHUB/AI-Telegram-News-Bot/services/summarizer.py#L41-L65)
+- **Locations**: `services/summarizer.py:41-65`
 - **Description**: Third-party news headlines and URLs scraped from external RSS feeds across the internet were concatenated directly into the Google Gemini LLM prompt without boundary delimiters or defensive instruction framing.
 - **Evidence**:
   ```python
@@ -62,7 +62,7 @@ Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous 
 - **Impact**: Manipulation of daily AI intelligence briefings broadcast to all Telegram channel subscribers; potential delivery of spam or misleading headlines.
 - **Root Cause**: Untrusted external inputs were interpolated without delimiters or explicit system instructions forbidding execution of embedded commands.
 - **Remediation**: Wrapped all article data in `<news_articles>` XML-style delimiters and added explicit system instructions warning the model that content within the tags is untrusted external data that must not be executed.
-- **Regression Test**: [`tests/test_summarizer_v2.py::TestSummarizer::test_summarize_defends_against_prompt_injection`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_summarizer_v2.py#L40-L70)
+- **Regression Test**: `tests/test_summarizer_v2.py::TestSummarizer::test_summarize_defends_against_prompt_injection`
 - **Commit**: `e7bc131`
 - **Residual Risk**: High-level semantic bias in source articles may still influence summary sentiment, but command hijacking is mitigated.
 
@@ -72,7 +72,7 @@ Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous 
 - **Severity**: Medium | **Confidence**: High | **Domain**: 11 - Abuse, Bots, Rate Limiting, Denial of Service, and Cost Control
 - **CWE**: CWE-770 | **OWASP**: A04:2021-Insecure Design
 - **Status**: `fixed` | **Tier**: A
-- **Locations**: [`run_bot.py:30-100, 213-290`](file:///f:/GITHUB/AI-Telegram-News-Bot/run_bot.py#L30-L100)
+- **Locations**: `run_bot.py:30-100, 213-290`
 - **Description**: Interactive Telegram commands (`/summary`, `/daily`, `/compare`) lacked per-user rate limiting, and the internal task queue (`_QUEUE`) grew without bounds, allowing malicious users to flood commands and exhaust memory or Gemini API quota.
 - **Evidence**:
   ```python
@@ -84,7 +84,7 @@ Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous 
 - **Impact**: Server crash, unresponsiveness, denial of service for legitimate users, and unexpected cloud API billing spikes.
 - **Root Cause**: Missing backlog capacity threshold and missing per-user rate-limiting checks on interactive command handlers.
 - **Remediation**: Added `MAX_QUEUE_SIZE = 100` with graceful `"Server is currently busy"` responses when overloaded, and introduced per-user cooldown tracking (`_is_user_throttled`).
-- **Regression Test**: [`tests/test_user_rate_limit.py::test_user_rate_limiting_throttles_burst`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_user_rate_limit.py#L18-L45) & [`test_queue_overflow_rejected`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_user_rate_limit.py#L48-L70)
+- **Regression Test**: `tests/test_user_rate_limit.py::test_user_rate_limiting_throttles_burst` & `test_queue_overflow_rejected`
 - **Commit**: `e2b5cba`
 - **Residual Risk**: A botnet utilizing hundreds of distinct Telegram accounts could fill the queue up to the cap; can be further mitigated in production via Telegram channel-only restriction.
 
@@ -94,7 +94,7 @@ Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous 
 - **Severity**: Low | **Confidence**: High | **Domain**: 5 - Secrets and Credential Hygiene
 - **CWE**: CWE-20 | **OWASP**: A04:2021-Insecure Design
 - **Status**: `fixed` | **Tier**: A
-- **Locations**: [`get_chat_id.py:6-15`](file:///f:/GITHUB/AI-Telegram-News-Bot/get_chat_id.py#L6-L15)
+- **Locations**: `get_chat_id.py:6-15`
 - **Description**: `get_chat_id.py` read `Config.TELEGRAM_BOT_TOKEN` without checking if it was None or empty, sending requests to `https://api.telegram.org/botNone/getUpdates`.
 - **Evidence**: `url = f"https://api.telegram.org/bot{bot_token}/getUpdates"` called directly without checking `if not bot_token:`.
 - **Attack Scenario**: An administrator runs the onboarding helper without a `.env` file, leaking a request containing `botNone` across the network and failing with an unhandled exception.
@@ -111,14 +111,14 @@ Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous 
 - **Severity**: Low | **Confidence**: High | **Domain**: 12 - API-Specific Security
 - **CWE**: CWE-16 | **OWASP**: A05:2021-Security Misconfiguration
 - **Status**: `fixed` | **Tier**: A
-- **Locations**: [`health_server.py:44-60, 107`](file:///f:/GITHUB/AI-Telegram-News-Bot/health_server.py#L44-L60)
+- **Locations**: `health_server.py:44-60, 107`
 - **Description**: The FastAPI health server exposed Swagger (`/docs`) and ReDoc (`/redoc`) by default on port 8080, while simultaneously applying a `default-src 'none'` Content Security Policy that broke Swagger UI rendering.
 - **Evidence**: `docs_url="/docs"`, `redoc_url="/redoc"` enabled unconditionally while `response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none';"` blocked all Swagger scripts.
 - **Attack Scenario**: An external network scanner maps port 8080 to discover API endpoints and operational details.
 - **Impact**: Information disclosure of API schema; broken developer documentation experience when enabled.
 - **Root Cause**: Documentation endpoints were enabled by default without an environment toggle, and CSP was applied uniformly without route discrimination.
 - **Remediation**: Made docs conditional on `ENABLE_DOCS=true` (disabled by default in production) and configured appropriate CSP allowances when docs are explicitly enabled.
-- **Regression Test**: [`tests/test_health_server.py::TestHealthServer::test_docs_disabled_by_default_in_production`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_health_server.py#L80-L90)
+- **Regression Test**: `tests/test_health_server.py::TestHealthServer::test_docs_disabled_by_default_in_production`
 - **Commit**: `fd29d85`
 - **Residual Risk**: None.
 
@@ -128,7 +128,7 @@ Detailed mapping, Mermaid data-flow diagrams, entry-point tables, and dangerous 
 - **Severity**: Low | **Confidence**: High | **Domain**: 24 - Secure SDLC, Governance, and Guardrails
 - **CWE**: CWE-1059 | **OWASP**: A05:2021-Security Misconfiguration
 - **Status**: `fixed` | **Tier**: A
-- **Locations**: [`SECURITY.md:5`](file:///f:/GITHUB/AI-Telegram-News-Bot/SECURITY.md#L5), [`.well-known/security.txt:1-5`](file:///f:/GITHUB/AI-Telegram-News-Bot/.well-known/security.txt#L1-L5)
+- **Locations**: `SECURITY.md:5`, `.well-known/security.txt:1-5`
 - **Description**: `SECURITY.md` pointed to a legacy repository URL (`SimAI-Telegram-Bot`), preventing responsible security disclosure, and the project lacked an RFC 9116 security.txt file.
 - **Evidence**: `https://github.com/themanoj-025/SimAI-Telegram-Bot/security/advisories` in `SECURITY.md`.
 - **Attack Scenario**: Security researchers discovering a vulnerability in the bot are unable to report it responsibly via GitHub Advisories, leading to public bug reports.
@@ -151,11 +151,11 @@ The following fixes were implemented and committed to the audit branch `security
 5. `52d38ae` - `security(policy): update advisory link and add security.txt [SEC-005]`
 
 New regression tests added:
-- [`tests/test_summarizer_v2.py::TestSummarizer::test_summarize_defends_against_prompt_injection`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_summarizer_v2.py#L40-L70)
-- [`tests/test_user_rate_limit.py::test_user_rate_limiting_throttles_burst`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_user_rate_limit.py#L18-L45)
-- [`tests/test_user_rate_limit.py::test_queue_overflow_rejected`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_user_rate_limit.py#L48-L70)
-- [`tests/test_health_server.py::TestHealthServer::test_security_headers_present`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_health_server.py#L71-L80)
-- [`tests/test_health_server.py::TestHealthServer::test_docs_disabled_by_default_in_production`](file:///f:/GITHUB/AI-Telegram-News-Bot/tests/test_health_server.py#L81-L90)
+- `tests/test_summarizer_v2.py::TestSummarizer::test_summarize_defends_against_prompt_injection`
+- `tests/test_user_rate_limit.py::test_user_rate_limiting_throttles_burst`
+- `tests/test_user_rate_limit.py::test_queue_overflow_rejected`
+- `tests/test_health_server.py::TestHealthServer::test_security_headers_present`
+- `tests/test_health_server.py::TestHealthServer::test_docs_disabled_by_default_in_production`
 
 ---
 
@@ -255,4 +255,4 @@ All 25 security domains were audited and assessed against the code:
 
 - Audit branch: `security-audit/2026-10-15`
 - Test commands run: `.venv\Scripts\pytest.exe` (148 passed, 81.30% coverage)
-- Normalized findings file: [`security-audit/findings.json`](file:///f:/GITHUB/AI-Telegram-News-Bot/security-audit/findings.json)
+- Normalized findings file: [`findings.json`](findings.json)
