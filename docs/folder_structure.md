@@ -50,7 +50,7 @@ AI-Telegram-News-Bot/
 ├── docker-compose.yml  docker-compose.dev.yml  docker-compose.prod.yml
 ├── Makefile  Procfile  railway.json  render.yaml  runtime.txt
 ├── pyproject.toml  requirements.txt
-├── README.md  PROJECT_OVERVIEW.md  PROJECT_ANALYSIS.md  AGENTS.md
+├── README.md  PROJECT_OVERVIEW.md  PROJECT_ANALYSIS.md  
 ├── StartBot.ps1  start_bot.bat
 └── .env.example  .gitignore  .dockerignore  .editorconfig  .gitattributes  .vscode/
 ```
@@ -101,7 +101,7 @@ subtree from the tree listing).
 | `run_bot.py` | ✔ entry point |
 | `Dockerfile`, `docker-compose*.yml`, `Procfile`, `railway.json`, `render.yaml`, `runtime.txt` | ✔ container/deploy tooling |
 | `Makefile`, `pyproject.toml`, `requirements.txt` | ✔ standard metadata |
-| `README.md`, `PROJECT_OVERVIEW.md`, `PROJECT_ANALYSIS.md`, `AGENTS.md` | ✔ metadata / docs |
+| `README.md`, `PROJECT_OVERVIEW.md`, `PROJECT_ANALYSIS.md`, `` | ✔ metadata / docs |
 | `config/`, `scrapers/`, `services/`, `utils/`, `docs/`, `.github/` | ✔ top-level folders |
 | `tests/`, `scripts/` | ✔ tests + operational verification scripts (moved from root in v6; CI paths updated to `tests/` and `scripts/`) |
 | `get_chat_id.py`, `list_models.py` | ✔ dev utilities (flagged in analysis §6.4) |
