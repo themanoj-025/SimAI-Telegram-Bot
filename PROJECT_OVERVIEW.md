@@ -704,7 +704,6 @@ Total tracked files in repository tree: 140
 | [`.github/ISSUE_TEMPLATE/bug_report.md`](.github/ISSUE_TEMPLATE/bug_report.md) | `.md` | 39 | 1063 | GitHub Actions CI/CD automation workflow |
 | [`.github/ISSUE_TEMPLATE/feature_request.md`](.github/ISSUE_TEMPLATE/feature_request.md) | `.md` | 36 | 1108 | GitHub Actions CI/CD automation workflow |
 | [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) | `.md` | 47 | 1542 | GitHub Actions CI/CD automation workflow |
-| [`.github/copilot-instructions.md`](.github/copilot-instructions.md) | `.md` | 18 | 687 | GitHub Actions CI/CD automation workflow |
 | [`.github/dependabot.yml`](.github/dependabot.yml) | `.yml` | 34 | 700 | GitHub Actions CI/CD automation workflow |
 | [`.github/labeler.yml`](.github/labeler.yml) | `.yml` | 21 | 623 | GitHub Actions CI/CD automation workflow |
 | [`.github/scripts/check_lockfile.py`](.github/scripts/check_lockfile.py) | `.py` | 214 | 7174 | GitHub Actions CI/CD automation workflow |
