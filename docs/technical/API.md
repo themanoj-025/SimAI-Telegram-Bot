@@ -36,7 +36,7 @@
 ```json
 {
   "chat_id": 123456789,
-  "text": "*AI Daily Brief* — 2026-08-06\n1. [Title](url) ...",
+  "text": "*AI Daily Brief* — 2026-08-06\n1. [Title](https://example.com/article) ...",
   "parse_mode": "Markdown"
 }
 ```

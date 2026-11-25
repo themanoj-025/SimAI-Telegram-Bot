@@ -118,8 +118,8 @@ AI Telegram News Bot resolves these challenges through automated summarization, 
 | :--- | :--- | :--- |
 | **Asynchronous Scraper Fleet** | Concurrent HTTP fetchers for GitHub Trending, TechCrunch, HackerNews, and Indian AI sources | [`scrapers/async_base_scraper.py`](scrapers/async_base_scraper.py) |
 | **Gemini LLM Summarizer** | Google Gemini API integration with prompt templates distilling 3-bullet takeaways | [`services/summarizer.py`](services/summarizer.py) |
-| **Telegram Dispatcher** | Asynchronous Telegram Bot client supporting interactive commands and scheduled broadcasts | [`services/telegram_bot.py`](services/telegram_bot.py) |
-| **Message Length Guard** | Automatic splitting and formatting ensuring strict compliance with the 4,096-char ceiling | [`utils/message_length_guard.py`](utils/message_length_guard.py) |
+| **Telegram Dispatcher** | Asynchronous Telegram Bot client supporting interactive commands and scheduled broadcasts | [`run_bot.py`](run_bot.py) |
+| **Message Length Guard** | Automatic splitting and formatting ensuring strict compliance with the 4,096-char ceiling | [`utils/telegram_utils.py`](utils/telegram_utils.py) |
 | **APScheduler Daemon** | Non-blocking periodic scheduling for morning digests, breaking alerts, and health pings | [`services/scheduler.py`](services/scheduler.py) |
 | **Deduplication Cache** | TTL-governed hash cache preventing duplicate broadcasts across refresh intervals | [`utils/cache_manager.py`](utils/cache_manager.py) |
 | **Zero-Downtime Fallback** | Pre-packaged fallback technology digests activated when external feeds experience network downtime | [`scrapers/fallback_data.py`](scrapers/fallback_data.py) |
@@ -338,13 +338,13 @@ AI-Telegram-News-Bot/
 
 | Module Path | Functional Layer | Architectural Responsibility |
 | :--- | :--- | :--- |
-| [`services/telegram_bot.py`](services/telegram_bot.py) | Telegram Interface | Dispatches messages, processes user commands, and handles errors |
+| [`run_bot.py`](run_bot.py) | Telegram Interface | Dispatches messages, processes user commands, and handles errors |
 | [`services/summarizer.py`](services/summarizer.py) | LLM Synthesis | Interfaces with Google Gemini to produce concise bullet digests |
 | [`services/scheduler.py`](services/scheduler.py) | Job Orchestration | Coordinates non-blocking APScheduler periodic execution cycles |
-| [`services/health_server.py`](services/health_server.py) | Monitoring | Exposes lightweight HTTP liveness and readiness probe endpoints |
+| [`health_server.py`](health_server.py) | Monitoring | Exposes lightweight HTTP liveness and readiness probe endpoints |
 | [`scrapers/async_base_scraper.py`](scrapers/async_base_scraper.py) | Data Ingestion | Base asynchronous HTTP client with retry logic and rate handling |
 | [`scrapers/fallback_data.py`](scrapers/fallback_data.py) | Fault Tolerance | Supplies curated offline backup news when web feeds fail |
-| [`utils/message_length_guard.py`](utils/message_length_guard.py) | Formatting | Enforces Telegram message boundary rules (< 4,096 chars) |
+| [`utils/telegram_utils.py`](utils/telegram_utils.py) | Formatting | Enforces Telegram message boundary rules (< 4,096 chars) |
 | [`utils/cache_manager.py`](utils/cache_manager.py) | Deduplication | In-memory cache filtering previously broadcasted article hashes |
 | [`config/__init__.py`](config/__init__.py) | Configuration | Loads environment variables and configures credentials |
 
@@ -596,7 +596,7 @@ Deployable via Docker container running Uvicorn health server and background bot
 2. **Q: What LLM provider is utilized for news summarization?**
    *A:* Google Gemini (`google-generativeai`). Reference: [`services/summarizer.py`](services/summarizer.py).
 3. **Q: What is the maximum character limit enforced by the message length guard?**
-   *A:* 4,096 characters (Telegram message ceiling). Reference: [`utils/message_length_guard.py`](utils/message_length_guard.py).
+   *A:* 4,096 characters (Telegram message ceiling). Reference: [`utils/telegram_utils.py`](utils/telegram_utils.py).
 4. **Q: What library coordinates background periodic scraping and publishing?**
    *A:* APScheduler. Reference: [`services/scheduler.py`](services/scheduler.py).
 5. **Q: How many total tracked files exist in the repository?**
@@ -744,10 +744,6 @@ Total tracked files in repository tree: 140
 | [`docs/DISASTER-RECOVERY.md`](docs/DISASTER-RECOVERY.md) | `.md` | 42 | 1248 | Technical design and documentation asset |
 | [`docs/README.md`](docs/README.md) | `.md` | 66 | 3030 | Technical design and documentation asset |
 | [`docs/architecture.md`](docs/architecture.md) | `.md` | 120 | 6724 | Technical design and documentation asset |
-| [`docs/audit/cleanup-audit-2026-08-13.md`](docs/audit/cleanup-audit-2026-08-13.md) | `.md` | 54 | 2977 | Technical design and documentation asset |
-| [`docs/audit/cleanup-audit-2026-08-15-code.md`](docs/audit/cleanup-audit-2026-08-15-code.md) | `.md` | 50 | 1971 | Technical design and documentation asset |
-| [`docs/audit/cleanup-audit-2026-08-15.md`](docs/audit/cleanup-audit-2026-08-15.md) | `.md` | 75 | 2365 | Technical design and documentation asset |
-| [`docs/audit/dependabot-inventory-2026-08-16.md`](docs/audit/dependabot-inventory-2026-08-16.md) | `.md` | 234 | 20262 | Technical design and documentation asset |
 | [`docs/community/CHANGELOG.md`](docs/community/CHANGELOG.md) | `.md` | 57 | 2022 | Technical design and documentation asset |
 | [`docs/community/CODE_OF_CONDUCT.md`](docs/community/CODE_OF_CONDUCT.md) | `.md` | 132 | 5476 | Technical design and documentation asset |
 | [`docs/community/CONTRIBUTING.md`](docs/community/CONTRIBUTING.md) | `.md` | 107 | 3951 | Technical design and documentation asset |
@@ -756,9 +752,6 @@ Total tracked files in repository tree: 140
 | [`docs/design/AppFlow.md`](docs/design/AppFlow.md) | `.md` | 128 | 5105 | Technical design and documentation asset |
 | [`docs/design/Design.md`](docs/design/Design.md) | `.md` | 95 | 2922 | Technical design and documentation asset |
 | [`docs/folder_structure.md`](docs/folder_structure.md) | `.md` | 125 | 7251 | Technical design and documentation asset |
-| [`docs/migration/file_move_ledger.md`](docs/migration/file_move_ledger.md) | `.md` | 56 | 3233 | Technical design and documentation asset |
-| [`docs/migration/migration_summary.md`](docs/migration/migration_summary.md) | `.md` | 125 | 7579 | Technical design and documentation asset |
-| [`docs/migration/old_tree_to_new_tree.md`](docs/migration/old_tree_to_new_tree.md) | `.md` | 66 | 3407 | Technical design and documentation asset |
 | [`docs/module_dependency.md`](docs/module_dependency.md) | `.md` | 54 | 2687 | Technical design and documentation asset |
 | [`docs/package_overview.md`](docs/package_overview.md) | `.md` | 71 | 2873 | Technical design and documentation asset |
 | [`docs/product/PRD.md`](docs/product/PRD.md) | `.md` | 136 | 6709 | Technical design and documentation asset |

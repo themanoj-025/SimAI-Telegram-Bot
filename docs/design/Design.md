@@ -44,8 +44,8 @@ N/A — Telegram native rendering. Use `*bold*` for section headers and item tit
 *🤖 AI Daily Brief — 2026-08-06*
 ──────────────────────────
 *1. NEWS*
-1. [Title](url) — one-line summary
-2. [Title](url) — one-line summary
+1. [Title](https://example.com/article) — one-line summary
+2. [Title](https://example.com/article) — one-line summary
 ──────────────────────────
 *2. PAPERS*
 ...
