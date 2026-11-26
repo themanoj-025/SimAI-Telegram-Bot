@@ -1,4 +1,4 @@
-# Rules — AI Daily Telegram Bot: Coding Standards & AI-Agent Rules
+# Rules — AI Daily Telegram Bot: Coding Standards & Engineering Operating Rules
 
 | Field | Value |
 | --- | --- |
@@ -46,7 +46,7 @@ utils/                # cache, logger, telegram formatting
 - MUST have tests: message splitting, fallback selection, cache read/write, format helpers.
 - See [Testing.md](../technical/Testing.md).
 
-## 5. AI Agent Operating Rules
+## 5. Engineering Operating Rules
 
 - Always read Tracker.md and ImplementationPlan.md before starting a task.
 - Never mark a task 🟢 Done without tests passing.
