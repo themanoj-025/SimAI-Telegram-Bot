@@ -26,8 +26,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive
 
 # tini: proper PID-1 signal handling so SIGTERM reaches the bot process
+# libzstd1 is listed explicitly so apt upgrades the copy inherited from
+# the base image: python:3.15-slim ships 1.5.7+dfsg-1, which Trivy flags
+# as CVE-2026-124851 (HIGH, fixed in 1.5.7+dfsg-1+deb13u1).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         tini \
+        libzstd1 \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /usr/lib/python3/dist-packages/urllib3*
 
